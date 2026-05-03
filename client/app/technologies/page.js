@@ -46,7 +46,6 @@ export default function Technologies() {
         setTechnologies(res.data);
       } catch (err) {
         console.error("Failed to fetch technologies:", err);
-        // Premium realistic fallback
         setTechnologies([
           {
             name: 'React Server Components',
@@ -68,6 +67,125 @@ export default function Technologies() {
             trending_score: '94%',
             description: 'Fast, secure, and memory-safe systems programming for modern toolchains.',
             learning_path: 'Low Level Architecture'
+          },
+          {
+            name: 'Go Microservices',
+            category: 'Backend',
+            trending_score: '92%',
+            description: 'Scalable, concurrency-first cloud-native services with high throughput.',
+            learning_path: 'Go Basics → Concurrency → gRPC'
+          },
+          {
+            name: 'TypeScript Architect',
+            category: 'Frontend',
+            trending_score: '94%',
+            description: 'Type-safe frontend engineering across large complex codebases.',
+            learning_path: 'JS → Advanced TS → Design Patterns'
+          },
+          {
+            name: 'Kubernetes Orchestration',
+            category: 'DevOps',
+            trending_score: '90%',
+            description: 'Enterprise container orchestration and microservices lifecycle management.',
+            learning_path: 'Docker → YAML → Helm → GitOps'
+          },
+          {
+            name: 'Terraform IaC',
+            category: 'DevOps',
+            trending_score: '85%',
+            description: 'Provision cloud resources safely with declarative configuration language.',
+            learning_path: 'Cloud → HCL → Module Design'
+          },
+          {
+            name: 'Zero Trust Network',
+            category: 'Security',
+            trending_score: '82%',
+            description: 'Enforce continuous authentication across distributed systems.',
+            learning_path: 'Networking → IAM → OIDC → CSPM'
+          },
+          {
+            name: 'Penetration Testing',
+            category: 'Security',
+            trending_score: '78%',
+            description: 'Identify and mitigate vulnerabilities using advanced testing tools.',
+            learning_path: 'Linux → BurpSuite → OWASP → OSCP'
+          },
+          {
+            name: 'Flutter Framework',
+            category: 'Mobile',
+            trending_score: '80%',
+            description: 'High-fidelity native interfaces for iOS and Android from single codebase.',
+            learning_path: 'Dart → Widgets → GetX → Native Plugins'
+          },
+          {
+            name: 'Swift Native iOS',
+            category: 'Mobile',
+            trending_score: '75%',
+            description: 'Build premium responsive native iOS software using modern SwiftUI.',
+            learning_path: 'Swift → SwiftUI → Combine → CoreData'
+          },
+          {
+            name: 'PostgreSQL Mastery',
+            category: 'Database',
+            trending_score: '93%',
+            description: 'Relational database optimization, performance tuning, and extensions.',
+            learning_path: 'SQL → Indexing → PL/pgSQL → GIS'
+          },
+          {
+            name: 'MongoDB Document DB',
+            category: 'Database',
+            trending_score: '89%',
+            description: 'Schema-less, high-scale operational database for modern applications.',
+            learning_path: 'JSON → CRUD → Aggregation → Atlas'
+          },
+          {
+            name: 'WebAssembly Wasm',
+            category: 'Emerging',
+            trending_score: '65%',
+            description: 'Near-native performance for heavy computation runs directly in the browser.',
+            learning_path: 'C/Rust → WebAssembly → Emscripten'
+          },
+          {
+            name: 'Quantum Logic',
+            category: 'Emerging',
+            trending_score: '55%',
+            description: 'Algorithms and quantum state calculations for next-generation computation.',
+            learning_path: 'Linear Algebra → Qiskit → Algorithms'
+          },
+          {
+            name: 'Solidity Smart Contracts',
+            category: 'Emerging',
+            trending_score: '70%',
+            description: 'Decentralized application logic built on top of Ethereum virtual machine.',
+            learning_path: 'Blockchain → EVM → Solidity → HardHat'
+          },
+          {
+            name: 'ArgoCD GitOps',
+            category: 'DevOps',
+            trending_score: '82%',
+            description: 'Synchronized deployment state from Git repositories to Kubernetes.',
+            learning_path: 'K8s → Git → Sync Policies'
+          },
+          {
+            name: 'GraphQL Interface',
+            category: 'Backend',
+            trending_score: '84%',
+            description: 'Declarative query languages for modern data-driven client API clients.',
+            learning_path: 'REST → Schema Design → Resolvers'
+          },
+          {
+            name: 'Three.js Visuals',
+            category: 'Frontend',
+            trending_score: '72%',
+            description: 'Render complex, accelerated 3D graphics inside the web browser canvas.',
+            learning_path: 'Geometry → Shaders → React-Three-Fiber'
+          },
+          {
+            name: 'Redis Caching',
+            category: 'Backend',
+            trending_score: '88%',
+            description: 'In-memory key-value data structures used as low-latency cache layer.',
+            learning_path: 'Memcached → Redis CLI → Sharding'
           }
         ]);
       } finally {

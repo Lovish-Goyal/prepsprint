@@ -246,6 +246,102 @@ export default function LandingPage() {
               role="Data Engineer at Swiggy"
               stars={5}
             />
+            <TestimonialCard
+              quote="I loved the AI-powered mock interviews. The feedback was extremely actionable and pinpointed exactly where I was failing the STAR method."
+              name="Vikram Singh"
+              role="Software Engineer II at Microsoft"
+              stars={5}
+            />
+            <TestimonialCard
+              quote="The depth of the tech discovery protocol is insane. We use these architectural primitives to make critical engineering choices daily."
+              name="Devika Menon"
+              role="Lead Developer at Freshworks"
+              stars={5}
+            />
+            <TestimonialCard
+              quote="I followed the Rust & systems roadmap religiously. Six months later, I cleared the systems interview at a tier-1 tech firm. Extremely structured."
+              name="Siddharth Roy"
+              role="Systems Engineer"
+              stars={5}
+            />
+            <TestimonialCard
+              quote="Being able to visualize my progress using the skills tracker kept me motivated. The learning insights and progress rings are incredibly accurate."
+              name="Anjali Verma"
+              role="Full Stack Engineer at Zomato"
+              stars={5}
+            />
+            <TestimonialCard
+              quote="PrepSprint was exactly what I needed to switch to a DevOps role. The Kubernetes and Terraform roadmap was completely production-aligned."
+              name="Rahul Nair"
+              role="DevOps Engineer"
+              stars={5}
+            />
+            <TestimonialCard
+              quote="I built my confidence from ground zero with PrepSprint's AI career mentor. It's like having a senior engineer in your corner 24/7."
+              name="Shreya Patel"
+              role="Software SDE at Jio"
+              stars={5}
+            />
+            <TestimonialCard
+              quote="The future scope market intelligence section let me pivot from simple web development to high-demand LLM engineering. Truly premium."
+              name="Kunal Kapoor"
+              role="AI Engineer"
+              stars={5}
+            />
+            <TestimonialCard
+              quote="From creating my resume to passing the final architectural round, PrepSprint's separated modules had everything ready for me."
+              name="Neha Saxena"
+              role="Technical Lead"
+              stars={5}
+            />
+            <TestimonialCard
+              quote="PrepSprint completely removes tutorial paralysis. Having specific weekly deliverables makes career advancement effortless."
+              name="Arjun Das"
+              role="Senior Developer"
+              stars={5}
+            />
+            <TestimonialCard
+              quote="Their ATS-optimized resume builder gave me an 85%+ match on my target backend roles. My callback rates tripled instantly."
+              name="Sanjay Rao"
+              role="Backend Engineer at Ola"
+              stars={5}
+            />
+            <TestimonialCard
+              quote="The interview feedback pinpointed my lack of clarity around complex system architectures. I passed my Google SDE interview because of it!"
+              name="Tanvi Goel"
+              role="SDE III at Google"
+              stars={5}
+            />
+            <TestimonialCard
+              quote="PrepSprint didn't just teach me what to learn—it gave me the exact timing and sequencing for every single technology."
+              name="Sameer Khan"
+              role="Mobile Engineer at Swiggy"
+              stars={5}
+            />
+            <TestimonialCard
+              quote="No other platform matches the precision of PrepSprint's interactive skills analyzer. Pure engineering signal, zero noise."
+              name="Nidhi Bhatt"
+              role="Data Platform Lead"
+              stars={5}
+            />
+            <TestimonialCard
+              quote="The UI is so beautiful and responsive. It's incredibly motivating to come here every morning and update my tracking."
+              name="Ishaan Joshi"
+              role="UI/UX Developer"
+              stars={5}
+            />
+            <TestimonialCard
+              quote="I was able to map out my transition to Cloud Native architecture perfectly using the high-fidelity blueprints."
+              name="Rohan Bansal"
+              role="Solutions Architect"
+              stars={5}
+            />
+            <TestimonialCard
+              quote="PrepSprint provides the clearest path to senior roles. The architectural dilemma and leadership blueprints are invaluable."
+              name="Meera Iyer"
+              role="Principal SDE"
+              stars={5}
+            />
           </div>
         </div>
       </section>

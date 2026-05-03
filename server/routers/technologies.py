@@ -44,9 +44,10 @@ async def get_technologies(
     db = Depends(get_db)
 ):
     """Fetch the full catalog of trending technologies for 2026"""
-    # Initialize if empty
-    count = await db.technologies.count_documents({})
-    if count == 0:
+    # Initialize if less than 20
+    count = await db.technologies.count_documents({"year": 2026})
+    if count < 20:
+        await db.technologies.delete_many({"year": 2026})
         await db.technologies.insert_many([{**t, "year": 2026, "created_at": datetime.utcnow()} for t in TRENDING_STACKS])
     
     query = {"year": 2026}
