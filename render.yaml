@@ -1,0 +1,30 @@
+services:
+  # Backend API service running FastAPI
+  - type: web
+    name: prepsprint-backend
+    env: python
+    rootDir: server
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: MONGODB_URI
+        sync: false
+      - key: DATABASE_NAME
+        value: prepsprint
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: ALLOWED_ORIGINS
+        sync: false
+
+  # Frontend web service running Next.js
+  - type: web
+    name: prepsprint-frontend
+    env: node
+    rootDir: client
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        sync: false
