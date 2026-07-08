@@ -7,13 +7,7 @@ from utils.helpers import serialize_mongo_doc
 
 router = APIRouter(prefix="/api/resume", tags=["resume"])
 
-async def get_current_user(db = Depends(get_db)):
-    # In a real app, extract user_id from JWT token
-    # For now, we'll fetch a default user or the first user found
-    user = await db.users.find_one({})
-    if not user:
-        raise HTTPException(status_code=401, detail="Not authenticated")
-    return serialize_mongo_doc(user)
+from utils.auth import get_current_user
 
 @router.get("/")
 async def get_my_resume(
@@ -21,12 +15,11 @@ async def get_my_resume(
     db = Depends(get_db)
 ):
     """Fetch the user's current resume"""
-    resume = await db.resumes.find_one({"user_id": str(current_user["_id"])})
+    resume = await db.resumes.find_one({"user_id": str(current_user["id"])})
     if not resume:
         return None
     
-    resume["id"] = str(resume["_id"])
-    return resume
+    return serialize_mongo_doc(resume)
 
 @router.post("/analyze")
 async def analyze_resume(
@@ -43,7 +36,7 @@ async def create_or_update_resume(
     db = Depends(get_db)
 ):
     """Create or update a professional user resume"""
-    user_id = str(current_user["_id"])
+    user_id = str(current_user["id"])
     
     resume_dict = resume_data.dict()
     resume_dict["user_id"] = user_id

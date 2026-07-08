@@ -27,20 +27,22 @@ export default function Navbar({ user }) {
 
   return (
     <header
-      className={`sticky top-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b ${
         scrolled
-          ? 'border-b border-slate-200/80 bg-white/95 backdrop-blur-lg shadow-[0_1px_3px_rgba(0,0,0,.04)]'
-          : 'border-b border-transparent bg-transparent'
+          ? 'border-slate-200/80 bg-white/95 backdrop-blur-md shadow-sm'
+          : 'border-transparent bg-transparent'
       }`}
     >
-      <div className="mx-auto flex h-[72px] w-full max-w-[1440px] items-center justify-between px-6 md:px-12">
+      <div className="mx-auto flex h-[60px] w-full max-w-[1440px] items-center justify-between px-6 md:px-12">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="grid h-9 w-9 place-items-center rounded-xl bg-blue-600 text-[13px] font-extrabold text-white shadow-lg shadow-blue-600/20 transition-transform group-hover:scale-105">
-            PS
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 via-blue-600 to-indigo-700 text-white shadow-md shadow-blue-600/20 transition-transform group-hover:scale-105">
+            <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
           </div>
           <div>
-            <p className="text-lg font-extrabold tracking-tight text-slate-900">PrepSprint</p>
+            <p className="text-lg font-extrabold tracking-tight text-slate-900">Prep<span className="text-blue-600">Sprint</span></p>
           </div>
         </Link>
 
@@ -61,23 +63,14 @@ export default function Navbar({ user }) {
           ))}
         </nav>
 
-        {/* Desktop CTA */}
-        <div className="hidden items-center gap-3 md:flex">
+        <div className="hidden items-center gap-4 md:flex">
           {user ? (
-            <>
-              <Link
-                href="/auth/login"
-                className="px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:text-slate-900"
-              >
-                Login
-              </Link>
-              <Link
-                href="/dashboard"
-                className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
-              >
-                Dashboard
-              </Link>
-            </>
+            <Link
+              href="/dashboard"
+              className="rounded-xl bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-blue-600/10 hover:bg-blue-700 transition"
+            >
+              Go to Dashboard
+            </Link>
           ) : (
             <>
               <Link
@@ -124,22 +117,13 @@ export default function Navbar({ user }) {
             ))}
             <div className="mt-4 flex flex-col gap-2">
               {user ? (
-                <>
-                  <Link
-                    href="/auth/login"
-                    className="rounded-xl border border-slate-200 px-4 py-3 text-center text-sm font-semibold text-slate-700"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Login
-                  </Link>
-                  <Link
-                    href="/dashboard"
-                    className="rounded-xl bg-blue-600 px-4 py-3 text-center text-sm font-semibold text-white"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Dashboard
-                  </Link>
-                </>
+                <Link
+                  href="/dashboard"
+                  className="rounded-xl bg-blue-600 px-4 py-3 text-center text-sm font-semibold text-white shadow-md shadow-blue-600/10"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Go to Dashboard
+                </Link>
               ) : (
                 <>
                   <Link

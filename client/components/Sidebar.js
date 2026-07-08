@@ -11,7 +11,8 @@ import {
   Target,
   User,
   ShieldCheck,
-  Settings
+  Settings,
+  LogOut
 } from 'lucide-react';
 
 export default function Sidebar() {
@@ -29,11 +30,13 @@ export default function Sidebar() {
   return (
     <aside className="w-64 bg-slate-900 text-slate-300 h-screen sticky top-0 flex flex-col border-r border-slate-800">
       <div className="p-8">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-xl">
-            P
+        <Link href="/" className="flex items-center gap-2.5 group">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center text-white shadow-md transition-transform group-hover:scale-105">
+            <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
           </div>
-          <span className="text-xl font-bold text-white tracking-tight">PrepSprint</span>
+          <span className="text-xl font-bold text-white tracking-tight">Prep<span className="text-indigo-400">Sprint</span></span>
         </Link>
       </div>
 
@@ -61,7 +64,7 @@ export default function Sidebar() {
         })}
       </nav>
 
-      <div className="p-4 mt-auto border-t border-slate-800">
+      <div className="p-4 mt-auto border-t border-slate-800 flex flex-col gap-2">
         <Link
           href="/account"
           className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all text-sm font-medium ${
@@ -71,13 +74,17 @@ export default function Sidebar() {
           <User size={18} className="text-slate-500" />
           <span>Account</span>
         </Link>
-        <div className="mt-4 px-4 py-3 bg-slate-800/50 rounded-xl border border-slate-700/50">
-          <p className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-1">Status</p>
-          <div className="flex items-center gap-2 text-xs text-white font-medium">
-            <ShieldCheck size={14} className="text-emerald-400" />
-            Verified Member
-          </div>
-        </div>
+        <button
+          onClick={() => {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('user');
+            window.location.href = '/';
+          }}
+          className="flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all text-sm font-medium text-red-400 hover:bg-red-500/10 hover:text-red-300 w-full text-left"
+        >
+          <LogOut size={18} className="text-red-400" />
+          <span>Logout</span>
+        </button>
       </div>
     </aside>
   );

@@ -1,0 +1,66 @@
+# Dependency directories
+node_modules/
+client/node_modules/
+
+# Next.js build outputs
+.next/
+client/.next/
+out/
+build/
+dist/
+
+# Python env and cache files
+venv/
+.venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Local environment files
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*
+!.env.example
+client/.env*
+!client/.env.example
+server/.env*
+!server/.env.example
+
+# IDE and OS configurations
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Database files
+*.db
+*.sqlite3
+
+# Log files
+*.log
+
+# Testing and coverage
+coverage/
+.coverage
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Local instructions guide
+instructions.txt
+
+

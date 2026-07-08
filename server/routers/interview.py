@@ -8,12 +8,7 @@ import json
 
 router = APIRouter(prefix="/api/interview", tags=["interview"])
 
-async def get_current_user(db = Depends(get_db)):
-    user = await db.users.find_one({})
-    if not user:
-        raise HTTPException(status_code=401, detail="Not authenticated")
-    user["id"] = str(user["_id"])
-    return user
+from utils.auth import get_current_user
 
 @router.get("/questions")
 async def get_interview_questions(

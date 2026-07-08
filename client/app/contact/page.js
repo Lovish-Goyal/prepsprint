@@ -48,8 +48,8 @@ export default function ContactUs() {
           <ContactInfoCard
             icon={<MapPin size={24} />}
             title="Visit Us"
-            detail="Bengaluru, India"
-            sub="100 Tech Park, Karnataka 560001"
+            detail="Ambala Cantt, Haryana, India"
+            sub="Techversoft Innovations Office"
           />
         </div>
       </section>

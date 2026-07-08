@@ -8,9 +8,7 @@ import {
   Target, 
   Sparkles, 
   ArrowRight, 
-  ExternalLink,
-  Zap,
-  Clock
+  Zap
 } from 'lucide-react';
 
 export default function Dashboard() {
@@ -57,12 +55,6 @@ export default function Dashboard() {
     },
   ];
 
-  const recentActivity = [
-    { tool: 'Resume Builder', project: 'Software Engineer CV', time: '2 hours ago' },
-    { tool: 'Roadmap', project: 'Senior Frontend Path', time: 'Yesterday' },
-    { tool: 'Technologies', project: 'Next.js 14 Guide', time: '2 days ago' },
-  ];
-
   return (
     <div className="space-y-10">
       {/* Header */}
@@ -94,9 +86,9 @@ export default function Dashboard() {
           {tools.map((tool, idx) => {
             const Icon = tool.icon;
             return (
-              <div key={idx} className="toolkit-card p-6 flex flex-col justify-between group">
+              <div key={idx} className="toolkit-card p-6 flex flex-col justify-between group hover:border-indigo-100 hover:shadow-md transition-all bg-white rounded-2xl border border-slate-200 min-h-[220px]">
                 <div>
-                  <div className={`w-12 h-12 rounded-xl ${tool.color} flex items-center justify-center mb-4 transition-transform group-hover:scale-110`}>
+                  <div className={`w-12 h-12 rounded-xl ${tool.color} flex items-center justify-center mb-4 transition-transform group-hover:scale-110 shadow-sm`}>
                     <Icon size={24} />
                   </div>
                   <h3 className="text-lg font-bold text-slate-900 mb-2">{tool.title}</h3>
@@ -104,65 +96,16 @@ export default function Dashboard() {
                 </div>
                 <Link 
                   href={tool.href}
-                  className="btn-primary w-full text-center flex items-center justify-center gap-2 group/btn"
+                  className="text-sm font-bold text-indigo-650 hover:text-indigo-750 flex items-center gap-1.5 transition-colors group/link mt-auto"
                 >
                   {tool.action}
-                  <ArrowRight size={18} className="transition-transform group-hover/btn:translate-x-1" />
+                  <ArrowRight size={16} className="transition-transform group-hover/link:translate-x-1" />
                 </Link>
               </div>
             );
           })}
         </div>
       </section>
-
-      <div className="grid lg:grid-cols-3 gap-10">
-        {/* Recent Activity */}
-        <section className="lg:col-span-1">
-          <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
-            <Clock size={20} className="text-slate-400" /> Recent Activity
-          </h2>
-          <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-            {recentActivity.map((activity, idx) => (
-              <div key={idx} className={`p-4 flex items-center justify-between group cursor-pointer hover:bg-slate-50 transition-colors ${idx !== recentActivity.length - 1 ? 'border-b border-slate-100' : ''}`}>
-                <div>
-                  <p className="text-sm font-bold text-slate-900">{activity.project}</p>
-                  <p className="text-[11px] text-slate-400 font-medium">{activity.tool}</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-[11px] text-slate-400 mb-1">{activity.time}</p>
-                  <ExternalLink size={14} className="text-slate-300 ml-auto group-hover:text-indigo-500 transition-colors" />
-                </div>
-              </div>
-            ))}
-            <button className="w-full py-3 bg-slate-50 text-[11px] font-bold text-slate-500 uppercase tracking-widest hover:bg-slate-100 transition-colors">
-              View All History
-            </button>
-          </div>
-        </section>
-
-        {/* Editorial Feed */}
-        <section className="lg:col-span-2">
-          <h2 className="text-xl font-bold text-slate-900 mb-6">Discovery & Insights</h2>
-          <div className="grid sm:grid-cols-2 gap-6">
-            <div className="toolkit-card p-6 border-slate-800 bg-slate-900 text-white group">
-              <div className="badge-indigo bg-indigo-500/20 text-indigo-300 mb-4 inline-block">Architecture</div>
-              <h3 className="text-lg font-bold mb-2 group-hover:text-indigo-300 transition-colors">The Micro-Frontend Dilemma</h3>
-              <p className="text-sm text-slate-400 mb-6">Expert analysis on when to decouple your presentation layer.</p>
-              <Link href="#" className="text-sm font-bold flex items-center gap-2 text-white">
-                Read Analysis <ArrowRight size={16} />
-              </Link>
-            </div>
-            <div className="toolkit-card p-6 group border-dashed bg-slate-50/50">
-              <div className="badge-gray mb-4 inline-block">Career Strategy</div>
-              <h3 className="text-lg font-bold mb-2">Architecting Your First 90 Days</h3>
-              <p className="text-sm text-slate-500 mb-6">A framework for newly promoted Senior Engineering leaders.</p>
-              <Link href="#" className="text-sm font-bold flex items-center gap-2 text-indigo-600">
-                View Blueprint <ArrowRight size={16} />
-              </Link>
-            </div>
-          </div>
-        </section>
-      </div>
     </div>
   );
 }

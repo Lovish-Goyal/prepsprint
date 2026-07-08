@@ -68,15 +68,19 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center px-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex flex-col items-center justify-center px-4 py-12 md:py-16 relative overflow-hidden">
+      {/* Decorative blobs */}
+      <div className="glow-blob w-[500px] h-[500px] bg-blue-500/10 -top-40 -right-40 absolute rounded-full blur-3xl pointer-events-none" />
+      <div className="glow-blob w-[500px] h-[500px] bg-purple-500/10 -bottom-40 -left-40 absolute rounded-full blur-3xl pointer-events-none" />
+      
+      <div className="w-full max-w-md relative z-10">
         {/* Header */}
-        <Link href="/" className="flex items-center gap-2 mb-8 justify-center">
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold">
-            CP
+        <Link href="/" className="flex items-center gap-3 mb-8 justify-center">
+          <div className="grid h-10 w-10 place-items-center rounded-xl bg-blue-600 text-[14px] font-extrabold text-white shadow-lg shadow-blue-600/20">
+            PS
           </div>
-          <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent hidden sm:inline">
-            CareerPath Pro
+          <span className="text-2xl font-black text-slate-900 tracking-tight">
+            PrepSprint
           </span>
         </Link>
 

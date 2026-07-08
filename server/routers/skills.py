@@ -11,30 +11,36 @@ from utils.helpers import serialize_mongo_doc, serialize_mongo_list
 
 router = APIRouter(prefix="/api/skills", tags=["skills"])
 
-async def get_current_user(db = Depends(get_db)):
-    user = await db.users.find_one({})
-    if not user:
-        raise HTTPException(status_code=401, detail="Not authenticated")
-    return serialize_mongo_doc(user)
+from utils.auth import get_current_user
 
 @router.post("/analyze")
 async def analyze_skill_gaps(
-    payload: dict, # {target_role: str, current_skills: list}
+    payload: dict,
 ):
-    """Perform a deep-dive AI analysis of skill gaps based on the target role"""
-    target_role = payload.get("target_role", "Software Engineer")
-    current_skills = payload.get("current_skills", [])
-    
-    ai_result = AIService.analyze_skill_gaps(current_skills, target_role)
-    
+    """Perform a deep-dive AI analysis of skill gaps based on resume and job description"""
+    target_role      = payload.get("target_role", "Software Engineer")
+    current_skills   = payload.get("current_skills", [])
+    resume_text      = payload.get("resume_text", "")
+    job_description  = payload.get("job_description", "")
+    experience_years = payload.get("experience_years", "0-1")
+
+    ai_result = AIService.analyze_skill_gaps(
+        current_skills,
+        target_role,
+        resume_text=resume_text,
+        job_description=job_description,
+        experience_years=experience_years,
+    )
+
     if ai_result.get("status") == "error":
         raise HTTPException(status_code=500, detail=ai_result.get("error"))
-    
+
     try:
         analysis = json.loads(ai_result["analysis"])
         return analysis
     except Exception as e:
-        raise HTTPException(status_code=500, detail="Failed to parse AI signal: " + str(e))
+        raise HTTPException(status_code=500, detail="Failed to parse AI response: " + str(e))
+
 
 @router.get("/")
 async def get_skills(
@@ -55,7 +61,7 @@ async def create_skill(
 ):
     """Add a new skill to the user profile"""
     skill_dict = skill_data.dict()
-    skill_dict["user_id"] = str(current_user["_id"])
+    skill_dict["user_id"] = str(current_user["id"])
     skill_dict["created_at"] = datetime.utcnow()
     
     result = await db.skills.insert_one(skill_dict)

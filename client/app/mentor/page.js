@@ -1,14 +1,60 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import ChatComponent from '@/components/ChatComponent';
-import { Sparkles, MessageSquare, Terminal, FileSearch, ShieldCheck } from 'lucide-react';
+import { Sparkles, MessageSquare, Terminal, ShieldCheck } from 'lucide-react';
+import { aiMentorAPI } from '@/lib/api';
 
 export default function MentorPage() {
-  const presets = [
-    { title: 'Architectural Review', desc: 'Get feedback on your system design choices.', icon: <Terminal size={18} /> },
-    { title: 'Resume Section Audit', desc: 'In-depth analysis of your experience narratives.', icon: <FileSearch size={18} /> },
-    { title: 'Tech Stack Strategy', desc: 'Identify optimal tools for your next big project.', icon: <Sparkles size={18} /> },
-  ];
+  const [sessions, setSessions] = useState([]);
+  const [activeSessionId, setActiveSessionId] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const loadSessions = async () => {
+    try {
+      const res = await aiMentorAPI.getSessions();
+      setSessions(res.data);
+      if (res.data.length > 0) {
+        setActiveSessionId(res.data[0]._id || res.data[0].id);
+      } else {
+        await handleNewChat();
+      }
+    } catch (err) {
+      console.error("Failed to load sessions:", err);
+      // Create a default local session if API fails
+      const fallbackSession = {
+        id: 'local-default',
+        title: 'New Chat Session',
+        messages: [
+          {
+            id: 1,
+            text: "Hi! I'm your AI Career Mentor. I can help you with career guidance, resume tips, or any skill-related questions. What would you like to know?",
+            sender: 'bot',
+            timestamp: new Date().toISOString()
+          }
+        ]
+      };
+      setSessions([fallbackSession]);
+      setActiveSessionId('local-default');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadSessions();
+  }, []);
+
+  const handleNewChat = async () => {
+    try {
+      const res = await aiMentorAPI.createSession();
+      const newSess = res.data;
+      setSessions(prev => [newSess, ...prev]);
+      setActiveSessionId(newSess._id || newSess.id);
+    } catch (err) {
+      console.error("Failed to create new session:", err);
+    }
+  };
 
   return (
     <div className="space-y-8">
@@ -23,9 +69,9 @@ export default function MentorPage() {
         </p>
       </section>
 
-      <div className="grid lg:grid-cols-4 gap-10 min-h-[600px]">
+      <div className="grid lg:grid-cols-4 gap-10 h-[600px]">
         {/* Chat Main */}
-        <div className="lg:col-span-3 flex flex-col toolkit-card bg-white overflow-hidden">
+        <div className="lg:col-span-3 flex flex-col toolkit-card bg-white overflow-hidden h-full">
           <div className="p-4 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center">
@@ -45,27 +91,50 @@ export default function MentorPage() {
             </div>
           </div>
           <div className="flex-1 overflow-hidden">
-            <ChatComponent />
+            {loading ? (
+              <div className="flex items-center justify-center h-full">
+                <div className="w-8 h-8 border-4 border-slate-200 border-t-indigo-600 rounded-full animate-spin"></div>
+              </div>
+            ) : (
+              <ChatComponent 
+                activeSessionId={activeSessionId}
+                sessions={sessions}
+                setSessions={setSessions}
+              />
+            )}
           </div>
         </div>
 
         {/* Sidebar / Presets */}
         <div className="space-y-6">
           <div className="space-y-4">
-            <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Consultation Presets</h3>
-            <div className="space-y-3">
-              {presets.map((preset, idx) => (
-                <button 
-                  key={idx} 
-                  className="w-full toolkit-card p-4 text-left group hover:border-indigo-400 transition-all bg-white"
-                >
-                  <div className="w-8 h-8 rounded-lg bg-slate-50 text-slate-400 mb-3 flex items-center justify-center group-hover:text-indigo-600 group-hover:bg-indigo-50 transition-colors">
-                    {preset.icon}
-                  </div>
-                  <h4 className="text-sm font-bold text-slate-800 mb-1">{preset.title}</h4>
-                  <p className="text-[11px] text-slate-500 leading-relaxed">{preset.desc}</p>
-                </button>
-              ))}
+            <div className="flex items-center justify-between">
+              <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">History Chats</h3>
+              <button 
+                onClick={handleNewChat}
+                className="text-[10px] font-bold text-indigo-600 hover:text-indigo-700 bg-indigo-50 hover:bg-indigo-100/80 px-2.5 py-1 rounded transition outline-none"
+              >
+                + New Chat
+              </button>
+            </div>
+            
+            <div className="space-y-2 max-h-[350px] overflow-y-auto pr-1">
+              {sessions.map((sess) => {
+                const isAct = (sess._id || sess.id) === activeSessionId;
+                return (
+                  <button 
+                    key={sess._id || sess.id} 
+                    onClick={() => setActiveSessionId(sess._id || sess.id)}
+                    className={`w-full p-3.5 text-left rounded-xl transition-all border outline-none text-xs flex items-center gap-2.5
+                      ${isAct 
+                        ? 'bg-indigo-50/40 border-indigo-200/80 text-indigo-700 font-bold' 
+                        : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'}`}
+                  >
+                    <MessageSquare size={14} className={isAct ? 'text-indigo-600' : 'text-slate-400'} />
+                    <span className="truncate flex-1">{sess.title}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
 
@@ -75,7 +144,7 @@ export default function MentorPage() {
               <p className="text-[10px] font-bold uppercase tracking-widest">Context Awareness</p>
             </div>
             <p className="text-xs text-slate-500 leading-relaxed">
-              Pathfinder has access to your <span className="font-bold text-slate-700">Resume Draft V1</span> and <span className="font-bold text-slate-700">Frontend Roadmap</span> for context-aware assistance.
+              Pathfinder has access to your Resume profile and roadmap for context-aware assistance.
             </p>
           </div>
         </div>
@@ -83,4 +152,3 @@ export default function MentorPage() {
     </div>
   );
 }
-

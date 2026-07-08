@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import {
   ArrowRight, FileText, Map, Users, Layers, Sparkles,
@@ -10,18 +11,19 @@ import { useAuth } from '@/lib/auth';
 
 export default function LandingPage() {
   const { user } = useAuth();
+  const [activeModalFeature, setActiveModalFeature] = useState(null);
 
   return (
     <div className="w-full overflow-hidden">
 
       {/* ═══════════════════ 1. HERO ═══════════════════ */}
-      <section className="relative min-h-[92vh] flex items-center">
+      <section className="relative pt-24 pb-16 md:pt-28 md:pb-20 flex items-center">
         {/* Decorative blobs */}
         <div className="glow-blob w-[600px] h-[600px] bg-blue-500 -top-40 -right-40" />
         <div className="glow-blob w-[500px] h-[500px] bg-violet-500 top-60 -left-40 opacity-20" />
         <div className="glow-blob w-[300px] h-[300px] bg-blue-400 bottom-20 right-1/4 opacity-15" />
 
-        <div className="relative z-10 mx-auto w-full max-w-[1440px] px-6 md:px-12 py-24 lg:py-32">
+        <div className="relative z-10 mx-auto w-full max-w-[1440px] px-6 md:px-12">
           <div className="max-w-4xl">
             <div className="fade-in inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50/80 px-5 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-blue-700 backdrop-blur-sm">
               <Sparkles size={13} /> Career Acceleration Platform
@@ -74,33 +76,51 @@ export default function LandingPage() {
           <SectionHeader
             tag="Core Features"
             title="Everything You Need to Succeed"
-            subtitle="Four powerful modules designed to take you from zero to hired — structured, guided, and measurable."
+            subtitle="Six powerful modules designed to take you from zero to hired — structured, guided, and measurable."
           />
 
-          <div className="mt-16 grid gap-6 md:grid-cols-2">
+          <div className="mt-16 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             <FeatureCard
               icon={<FileText size={28} />}
               title="AI Resume Builder"
               description="Generate ATS-optimized resumes tailored to specific roles. Our AI analyzes job descriptions and crafts targeted bullet points that highlight your strengths."
               color="blue"
+              onClick={() => setActiveModalFeature('AI Resume Builder')}
             />
             <FeatureCard
               icon={<Map size={28} />}
               title="Career Roadmaps"
               description="Step-by-step structured learning paths designed around real hiring patterns. Each roadmap breaks your journey into weekly sprints with clear deliverables."
               color="violet"
+              onClick={() => setActiveModalFeature('Career Roadmaps')}
             />
             <FeatureCard
               icon={<Users size={28} />}
               title="Mentor Support"
               description="Get guidance from experienced engineers who have walked the path. Structured feedback sessions help you avoid common pitfalls and accelerate growth."
               color="emerald"
+              onClick={() => setActiveModalFeature('Mentor Support')}
             />
             <FeatureCard
               icon={<Layers size={28} />}
               title="Tech Stack Planner"
               description="Know exactly which technologies to learn for your target role. Our planner maps skills to career goals so you never waste time on irrelevant tools."
               color="amber"
+              onClick={() => setActiveModalFeature('Tech Stack Planner')}
+            />
+            <FeatureCard
+              icon={<Target size={28} />}
+              title="Skill Analyzer"
+              description="Test your knowledge on key development stacks and frameworks. Get a detailed scorecard identifying your weak areas and learning gaps."
+              color="pink"
+              onClick={() => setActiveModalFeature('Skill Analyzer')}
+            />
+            <FeatureCard
+              icon={<Brain size={28} />}
+              title="AI Mock Interviews"
+              description="Practice real-world technical and behavioral interview questions. Get instantaneous diagnostic feedback aligned with industry grading systems."
+              color="indigo"
+              onClick={() => setActiveModalFeature('AI Mock Interviews')}
             />
           </div>
         </div>
@@ -375,38 +395,62 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ═══════════════════ 9. FINAL CTA ═══════════════════ */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900" />
-        <div className="glow-blob w-[600px] h-[600px] bg-blue-600 top-0 right-0 opacity-20" />
-        <div className="glow-blob w-[400px] h-[400px] bg-violet-600 bottom-0 left-0 opacity-15" />
+      {/* Detail Modal overlay */}
+      {activeModalFeature && FEATURE_DETAILS[activeModalFeature] && (
+        <div 
+          onClick={() => setActiveModalFeature(null)} 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200"
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()} 
+            className="bg-white rounded-3xl max-w-2xl w-full p-8 shadow-2xl border border-slate-100 relative overflow-hidden"
+          >
+            {/* Top Accent Icon */}
+            <div className="flex items-center gap-4 border-b border-slate-100 pb-5 mb-6">
+              <div className="h-12 w-12 rounded-2xl bg-slate-50 flex items-center justify-center shadow-inner">
+                {FEATURE_DETAILS[activeModalFeature].icon}
+              </div>
+              <div>
+                <h3 className="text-2xl font-black text-slate-900 tracking-tight">{FEATURE_DETAILS[activeModalFeature].title}</h3>
+                <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mt-0.5">Feature Deep Dive</p>
+              </div>
+            </div>
 
-        <div className="relative z-10 mx-auto max-w-4xl px-6 py-14 text-center md:py-20">
-          <h2 className="text-4xl font-extrabold tracking-tight text-white md:text-5xl lg:text-6xl">
-            Ready to accelerate
-            <br />
-            your career?
-          </h2>
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-blue-200 md:text-xl">
-            Join thousands of developers who stopped guessing and started building their careers with clarity and confidence.
-          </p>
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-            <Link
-              href={user ? '/dashboard' : '/auth/signup'}
-              className="inline-flex items-center gap-2.5 rounded-2xl bg-white px-8 py-4 text-base font-semibold text-blue-900 shadow-lg transition hover:bg-blue-50"
-            >
-              {user ? 'Go to Dashboard' : 'Start Free Today'}
-              <ArrowRight size={18} />
-            </Link>
-            <Link
-              href="/contact"
-              className="rounded-2xl border border-white/30 px-8 py-4 text-base font-semibold text-white transition hover:bg-white/10"
-            >
-              Talk to Our Team
-            </Link>
+            {/* Description */}
+            <p className="text-slate-600 text-sm leading-relaxed mb-6 font-medium">
+              {FEATURE_DETAILS[activeModalFeature].desc}
+            </p>
+
+            {/* Bullet Points */}
+            <div className="space-y-4">
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Key Capabilities</p>
+              <ul className="space-y-3.5">
+                {FEATURE_DETAILS[activeModalFeature].bullets.map((bullet, idx) => {
+                  const [label, desc] = bullet.split(': ');
+                  return (
+                    <li key={idx} className="flex gap-3 items-start">
+                      <CheckCircle2 size={16} className="text-emerald-500 shrink-0 mt-0.5" />
+                      <p className="text-xs text-slate-600 leading-relaxed">
+                        <strong className="text-slate-900 font-bold">{label}</strong>: {desc}
+                      </p>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+
+            {/* Close Button */}
+            <div className="mt-8 flex justify-end">
+              <button
+                onClick={() => setActiveModalFeature(null)}
+                className="px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl transition-all shadow-md"
+              >
+                Close Overview
+              </button>
+            </div>
           </div>
         </div>
-      </section>
+      )}
 
     </div>
   );
@@ -439,23 +483,99 @@ const featureColors = {
   violet:  { bg: 'bg-violet-600',  light: 'bg-violet-50', text: 'text-violet-600',  border: 'border-violet-100' },
   emerald: { bg: 'bg-emerald-600', light: 'bg-emerald-50',text: 'text-emerald-600', border: 'border-emerald-100' },
   amber:   { bg: 'bg-amber-600',   light: 'bg-amber-50', text: 'text-amber-600',   border: 'border-amber-100' },
+  pink:    { bg: 'bg-pink-600',    light: 'bg-pink-50',  text: 'text-pink-600',    border: 'border-pink-100' },
+  indigo:  { bg: 'bg-indigo-600',  light: 'bg-indigo-50', text: 'text-indigo-600',  border: 'border-indigo-100' },
 };
 
-function FeatureCard({ icon, title, description, color = 'blue' }) {
+function FeatureCard({ icon, title, description, color = 'blue', onClick }) {
   const c = featureColors[color];
   return (
-    <article className={`card-hover group rounded-3xl border ${c.border} bg-white p-8 md:p-10`}>
-      <div className={`mb-6 inline-flex h-14 w-14 items-center justify-center rounded-2xl ${c.bg} text-white shadow-lg transition-transform group-hover:scale-110`}>
-        {icon}
+    <article className={`card-hover group rounded-3xl border ${c.border} bg-white p-8 md:p-10 flex flex-col justify-between`}>
+      <div>
+        <div className={`mb-6 inline-flex h-14 w-14 items-center justify-center rounded-2xl ${c.bg} text-white shadow-lg transition-transform group-hover:scale-110`}>
+          {icon}
+        </div>
+        <h3 className="text-2xl font-bold text-slate-900">{title}</h3>
+        <p className="mt-4 text-base leading-relaxed text-slate-500">{description}</p>
       </div>
-      <h3 className="text-2xl font-bold text-slate-900">{title}</h3>
-      <p className="mt-4 text-base leading-relaxed text-slate-500">{description}</p>
-      <div className={`mt-6 inline-flex items-center gap-1.5 text-sm font-semibold ${c.text} opacity-0 transition-opacity group-hover:opacity-100`}>
+      <button 
+        onClick={onClick}
+        className={`mt-6 inline-flex items-center gap-1.5 text-sm font-semibold ${c.text} hover:underline w-fit text-left outline-none`}
+      >
         Learn more <ChevronRight size={14} />
-      </div>
+      </button>
     </article>
   );
 }
+
+const FEATURE_DETAILS = {
+  'AI Resume Builder': {
+    title: 'AI Resume Builder',
+    icon: <FileText size={24} className="text-blue-600" />,
+    desc: 'Build highly targeted, ATS-optimized resumes that stand out to tech recruiters globally.',
+    bullets: [
+      'ATS Optimization: Automatically parses target job descriptions to identify key search keywords and formats the text to pass recruiter parsing systems with a high match score.',
+      'Modern Corporate Layouts: Populates Harvard/Ivy-League standard single-column and multi-column designs approved by global hiring leads.',
+      'Smart Bullet Builder: Generate concise, metric-driven impact points following the Google XYZ formula (Accomplished [X] as measured by [Y], by doing [Z]).',
+      'Direct PDF Exports: High-quality rendering directly in your browser with dynamic layout alignment, ensuring text remains searchable.'
+    ]
+  },
+  'Career Roadmaps': {
+    title: 'Career Roadmaps',
+    icon: <Map size={24} className="text-violet-600" />,
+    desc: 'Follow custom-sequenced technical curriculum maps calibrated against actual industry job specifications.',
+    bullets: [
+      'Weekly Sprints: Break your learning path into clear, digestible milestones with dedicated practice tasks and study guides.',
+      'Milestone Projects: Build real-world portfolio assets to prove capability, structured to resemble enterprise codebases.',
+      'Dynamic Personalization: Generates learning tasks based on your current experience level (Beginner, Intermediate, Advanced).',
+      'Direct Concept Links: Explains topics in-depth with formatted key-value syntax and keywords highlighted in monospaced tags.'
+    ]
+  },
+  'Mentor Support': {
+    title: 'Mentor Support',
+    icon: <Users size={24} className="text-emerald-600" />,
+    desc: 'Receive direct asynchronous and live guidance from senior software engineers working at top tech firms.',
+    bullets: [
+      'Detailed Code Reviews: Get direct feedback on structural design patterns, test coverage, and clean coding best practices.',
+      'System Design Sprints: Schedule interactive preparation sessions mapping complex service-oriented architectural designs.',
+      'Mock Technical Screenings: Practice coding interviews with real engineers who evaluate execution, syntax logic, and scaling.',
+      'Career Planning guidance: Map out transition frameworks from college or non-technical backgrounds directly into tech.'
+    ]
+  },
+  'Tech Stack Planner': {
+    title: 'Tech Stack Planner',
+    icon: <Layers size={24} className="text-amber-600" />,
+    desc: 'Map out exactly which languages, libraries, and architectural concepts match your specific career objectives.',
+    bullets: [
+      'Market Intelligence: Scrapes real-time global hiring data to identify high-demand frameworks and declining languages.',
+      'Targeted Learning Paths: Highlights the exact list of tools required for backend, frontend, DevOps, or data engineering roles.',
+      'Irrelevant Stack Filtering: Keeps learning pathways efficient by stripping out redundant tutorials and legacy technologies.',
+      'Interactive Assessment: Maps frameworks visually inside interactive dependency cards to track technology coverage.'
+    ]
+  },
+  'Skill Analyzer': {
+    title: 'Skill Analyzer',
+    icon: <Target size={24} className="text-pink-600" />,
+    desc: 'Run interactive assessment test suites to verify technical competency levels across selected framework profiles.',
+    bullets: [
+      'Objective Evaluation: Evaluates syntax, memory management, scaling parameters, and caching logic in framework profiles.',
+      'Target Profile Matching: Benchmarks your scorecard against actual industry requirements for senior and mid-level roles.',
+      'Weak Spot Highlights: Pins down exact framework classes, methods, or database queries where your execution falls short.',
+      'Visual Progression Tracker: Maps progress dynamically on rings showing relative maturity ratings across framework concepts.'
+    ]
+  },
+  'AI Mock Interviews': {
+    title: 'AI Mock Interviews',
+    icon: <Brain size={24} className="text-indigo-600" />,
+    desc: 'Simulate realistic mock software engineering interview processes with PrepSprint\'s automated career strategist.',
+    bullets: [
+      'Dynamic Behavioral Checks: Runs targeted behavioral checks to assess communication clarity and team fit.',
+      'STAR Method Grading: Evaluates mock responses according to Situation, Task, Action, and Result formatting frameworks.',
+      'Instant Diagnostics: Delivers immediate feedback indicating structure errors, timing issues, or lack of architectural depth.',
+      'Detailed Mock transcripts: Saves historical transcripts with clear annotations detailing score progressions.'
+    ]
+  }
+};
 
 function StepCard({ num, title, description, isLast }) {
   return (

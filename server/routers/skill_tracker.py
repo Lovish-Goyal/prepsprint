@@ -8,12 +8,7 @@ from datetime import datetime
 
 router = APIRouter(prefix="/api/skill-tracker", tags=["skill-tracker"])
 
-async def get_current_user(db = Depends(get_db)):
-    user = await db.users.find_one({})
-    if not user:
-        raise HTTPException(status_code=401, detail="Not authenticated")
-    user["id"] = str(user["_id"])
-    return user
+from utils.auth import get_current_user
 
 def format_tracker(doc):
     if not doc: return None
@@ -46,14 +41,18 @@ async def submit_skill_tracking(
         Please provide constructive evaluation and suggestions for improvement.
         """
         
-        ai_evaluation = AIService.analyze_interview_answer(
+        ai_evaluation_res = AIService.analyze_interview_answer(
             submission.description,
             evaluation_prompt
         )
+        ai_evaluation = ai_evaluation_res.get("feedback", "") if isinstance(ai_evaluation_res, dict) else str(ai_evaluation_res)
         
         # Generate personalized suggestions
-        suggestions_prompt = f"Based on this skill tracking ({submission.skill_name}), suggest next steps for improvement."
-        ai_suggestions = AIService.generate_career_suggestions(suggestions_prompt)
+        ai_suggestions_res = AIService.generate_career_suggestions(
+            skills=[submission.skill_name],
+            experience=submission.description
+        )
+        ai_suggestions = ai_suggestions_res.get("suggestions", "") if isinstance(ai_suggestions_res, dict) else str(ai_suggestions_res)
         
         # Create tracking entry
         now = datetime.utcnow()
@@ -71,6 +70,8 @@ async def submit_skill_tracking(
         
         result = await db.skill_tracking.insert_one(new_entry)
         new_entry["id"] = str(result.inserted_id)
+        if "_id" in new_entry:
+            del new_entry["_id"]
         return new_entry
         
     except Exception as e:

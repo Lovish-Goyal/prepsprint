@@ -18,6 +18,9 @@ class UserResponse(BaseModel):
     email: str
     username: str
     full_name: str
+    name: Optional[str] = None
+    image: Optional[str] = None
+    bio: Optional[str] = None
     created_at: datetime
     
     class Config:
@@ -55,7 +58,7 @@ class RoadmapPhaseCreate(BaseModel):
 
 class RoadmapCreate(BaseModel):
     target_role: str
-    duration_months: int
+    target_level: str
     primary_interests: str
 
 class RoadmapResponse(BaseModel):
@@ -73,7 +76,18 @@ class ResumeCreate(BaseModel):
     full_name: str
     email: str
     phone: str
-    content: str
+    location: Optional[str] = None
+    linkedin: Optional[str] = None
+    summary: Optional[str] = None
+    experience: Optional[List[dict]] = None
+    projects: Optional[List[dict]] = None
+    skills: Optional[List[str]] = None
+    education: Optional[List[dict]] = None
+    certifications: Optional[List[dict]] = None
+    languages: Optional[List[str]] = None
+    interests: Optional[List[str]] = None
+    templateId: Optional[str] = None
+    content: Optional[str] = ""
 
 class ResumeAnalyze(BaseModel):
     text: str

@@ -18,7 +18,7 @@ export default function Footer() {
             <p className="text-lg font-extrabold tracking-tight text-white">PrepSprint</p>
           </div>
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-slate-500">
-            Build career clarity with personalized roadmaps, AI-powered tools, and structured mentorship. Stop guessing — start growing.
+            PrepSprint is an Ambala Cantt, Haryana based application proudly developed by Techversoft Innovations. Build career clarity with personalized roadmaps, AI-powered tools, and structured mentorship.
           </p>
           <div className="mt-6 flex gap-3">
             <SocialIcon icon={<Twitter size={16} />} />
@@ -55,7 +55,7 @@ export default function Footer() {
           <ul className="mt-4 space-y-3 text-sm text-slate-500">
             <li>support@prepsprint.com</li>
             <li>+91 98765 43210</li>
-            <li>Bengaluru, India</li>
+            <li>Ambala Cantt, Haryana, India</li>
           </ul>
         </div>
       </div>
@@ -63,7 +63,7 @@ export default function Footer() {
       {/* Bottom bar */}
       <div className="border-t border-slate-800/60">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 py-6 text-xs text-slate-600 md:flex-row">
-          <p>© {year} PrepSprint. All rights reserved.</p>
+          <p>© {year} PrepSprint. All rights reserved. Developed by Techversoft Innovations, Ambala Cantt, Haryana.</p>
           <div className="flex gap-6">
             <Link href="/privacy" className="transition hover:text-slate-400">Privacy</Link>
             <Link href="/terms" className="transition hover:text-slate-400">Terms</Link>

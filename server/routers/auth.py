@@ -54,6 +54,8 @@ async def register(user_data: UserRegister, db = Depends(get_db)):
     
     return user_dict
 
+from utils.auth import create_access_token
+
 @router.post("/login")
 async def login(credentials: UserLogin, db = Depends(get_db)):
     # Find user by email
@@ -65,10 +67,76 @@ async def login(credentials: UserLogin, db = Depends(get_db)):
             detail="Invalid credentials"
         )
     
+    token = create_access_token({"sub": str(user["_id"])})
+    
     return {
         "id": str(user["_id"]),
         "email": user["email"],
         "username": user["username"],
         "full_name": user["full_name"],
-        "token": "jwt_token_here"  # In production, generate JWT token
+        "token": token
     }
+
+from pydantic import BaseModel, EmailStr
+from jose import jwt, JWTError
+from datetime import datetime, timedelta, UTC
+import os
+
+SECRET_KEY = os.getenv("JWT_SECRET", "prepsprint_secret_key_12345")
+ALGORITHM = "HS256"
+
+class ForgotPasswordRequest(BaseModel):
+    email: EmailStr
+
+class ResetPasswordRequest(BaseModel):
+    token: str
+    new_password: str
+
+def create_reset_token(email: str):
+    expire = datetime.now(UTC) + timedelta(minutes=15)
+    to_encode = {"sub": email, "purpose": "password_reset", "exp": expire}
+    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+def verify_reset_token(token: str) -> str:
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        if payload.get("purpose") != "password_reset":
+            return None
+        return payload.get("sub")
+    except JWTError:
+        return None
+
+@router.post("/forgot-password")
+async def forgot_password(req: ForgotPasswordRequest, db = Depends(get_db)):
+    user = await db.users.find_one({"email": req.email})
+    if not user:
+        raise HTTPException(status_code=404, detail="No account found with this email address")
+    
+    token = create_reset_token(req.email)
+    reset_link = f"http://localhost:3000/auth/reset-password?token={token}"
+    
+    from utils.email import send_reset_email
+    success = send_reset_email(req.email, reset_link)
+    if not success:
+        raise HTTPException(status_code=500, detail="Failed to send password reset email. Please try again later.")
+        
+    return {"message": "Password reset link sent to your email"}
+
+@router.post("/reset-password")
+async def reset_password(req: ResetPasswordRequest, db = Depends(get_db)):
+    email = verify_reset_token(req.token)
+    if not email:
+        raise HTTPException(status_code=400, detail="Invalid or expired reset token")
+        
+    user = await db.users.find_one({"email": email})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+        
+    hashed_password = get_password_hash(req.new_password)
+    await db.users.update_one(
+        {"email": email},
+        {"$set": {"hashed_password": hashed_password}}
+    )
+    return {"message": "Password reset successfully"}
+
+

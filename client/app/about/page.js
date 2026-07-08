@@ -34,7 +34,7 @@ export default function AboutPage() {
                 PrepSprint started because we watched too many talented people waste months — sometimes years — jumping between random tutorials, unsure of what to learn next. The tech landscape is overwhelming, and there was no single place that combined roadmap clarity with practical execution tools.
               </p>
               <p>
-                We are a team of engineers, designers, and career strategists who believe that career growth should not require expensive bootcamps or knowing the right people. We built PrepSprint to give every developer a structured, actionable plan backed by AI tools and human mentorship.
+                We are Techversoft Innovations, a technology company based in Ambala Cantt, Haryana, India. We are a team of engineers, designers, and career strategists who believe that career growth should not require expensive bootcamps or knowing the right people. We built PrepSprint to give every developer a structured, actionable plan backed by AI tools and human mentorship.
               </p>
               <p>
                 Today, over 12,000 developers use PrepSprint to plan their careers, build resumes, track skills, and prepare for interviews — all in one focused workspace.
