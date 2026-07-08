@@ -11,7 +11,7 @@ import {
   ChevronRight,
 } from 'lucide-react';
 
-const API_BASE = 'http://localhost:8000/api';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
 export default function Roadmap() {
   const [targetRole, setTargetRole] = useState('');
@@ -200,38 +200,66 @@ export default function Roadmap() {
         <div className="grid md:grid-cols-[240px,1fr] gap-8 items-start">
           
           {/* LEFT COLUMN: Step Navigator Menu */}
-          <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden sticky top-6">
-            <div className="p-3 bg-slate-50 border-b border-slate-200">
-              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+          <div className="md:sticky md:top-6 flex flex-col gap-4">
+            {/* Desktop Vertical Menu */}
+            <div className="hidden md:block bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+              <div className="p-3 bg-slate-50 border-b border-slate-200">
+                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                  Pathway Navigator
+                </span>
+              </div>
+              <div className="divide-y divide-slate-100">
+                {roadmap.phases.map((phase, pIdx) => {
+                  const isActive = pIdx === activeStepIndex;
+                  const cleanedTitle = phase.name.replace(/^(Phase|Month|Step) \d+:\s*/i, '');
+                  
+                  return (
+                    <button
+                      key={pIdx}
+                      onClick={() => setActiveStepIndex(pIdx)}
+                      className={`w-full text-left p-4 transition-all flex items-center justify-between text-xs outline-none
+                        ${isActive 
+                          ? 'bg-indigo-50/50 border-l-4 border-l-indigo-600 font-bold text-indigo-600' 
+                          : 'text-slate-600 hover:bg-slate-50/50 hover:text-slate-800'}`}
+                    >
+                      <div className="min-w-0">
+                        <span className="block text-[9px] text-slate-400 uppercase font-bold mb-0.5">
+                          Step {pIdx + 1}
+                        </span>
+                        <span className="truncate block uppercase tracking-wide">
+                          {cleanedTitle}
+                        </span>
+                      </div>
+                      {isActive && <ChevronRight size={14} className="text-indigo-600 shrink-0 ml-2" />}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Mobile Horizontal Tabs */}
+            <div className="md:hidden flex flex-col gap-2">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider pl-0.5">
                 Pathway Navigator
               </span>
-            </div>
-            <div className="divide-y divide-slate-100">
-              {roadmap.phases.map((phase, pIdx) => {
-                const isActive = pIdx === activeStepIndex;
-                const cleanedTitle = phase.name.replace(/^(Phase|Month|Step) \d+:\s*/i, '');
-                
-                return (
-                  <button
-                    key={pIdx}
-                    onClick={() => setActiveStepIndex(pIdx)}
-                    className={`w-full text-left p-4 transition-all flex items-center justify-between text-xs outline-none
-                      ${isActive 
-                        ? 'bg-indigo-50/50 border-l-4 border-l-indigo-600 font-bold text-indigo-600' 
-                        : 'text-slate-600 hover:bg-slate-50/50 hover:text-slate-800'}`}
-                  >
-                    <div className="min-w-0">
-                      <span className="block text-[9px] text-slate-400 uppercase font-bold mb-0.5">
-                        Step {pIdx + 1}
-                      </span>
-                      <span className="truncate block uppercase tracking-wide">
-                        {cleanedTitle}
-                      </span>
-                    </div>
-                    {isActive && <ChevronRight size={14} className="text-indigo-600 shrink-0 ml-2" />}
-                  </button>
-                );
-              })}
+              <div className="flex flex-row overflow-x-auto gap-2 pb-2 scrollbar-none snap-x">
+                {roadmap.phases.map((phase, pIdx) => {
+                  const isActive = pIdx === activeStepIndex;
+                  const cleanedTitle = phase.name.replace(/^(Phase|Month|Step) \d+:\s*/i, '');
+                  return (
+                    <button
+                      key={pIdx}
+                      onClick={() => setActiveStepIndex(pIdx)}
+                      className={`px-4 py-2 rounded-xl text-xs font-bold border shrink-0 transition-all snap-start
+                        ${isActive 
+                          ? 'bg-indigo-600 border-indigo-600 text-white shadow-sm' 
+                          : 'bg-white border-slate-200 text-slate-500 hover:border-slate-300'}`}
+                    >
+                      Step {pIdx + 1}: {cleanedTitle}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
 

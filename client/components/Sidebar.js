@@ -15,7 +15,7 @@ import {
   LogOut
 } from 'lucide-react';
 
-export default function Sidebar() {
+export default function Sidebar({ mobileMode = false, closeDrawer }) {
   const pathname = usePathname();
 
   const menuItems = [
@@ -27,10 +27,16 @@ export default function Sidebar() {
     { id: 'mentor', label: 'AI Mentor', icon: Sparkles, href: '/mentor' },
   ];
 
-  return (
-    <aside className="w-64 bg-slate-900 text-slate-300 h-screen sticky top-0 flex flex-col border-r border-slate-800">
+  const handleLinkClick = () => {
+    if (closeDrawer) {
+      closeDrawer();
+    }
+  };
+
+  const content = (
+    <div className="flex flex-col h-full">
       <div className="p-8">
-        <Link href="/" className="flex items-center gap-2.5 group">
+        <Link href="/" onClick={handleLinkClick} className="flex items-center gap-2.5 group">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center text-white shadow-md transition-transform group-hover:scale-105">
             <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -51,6 +57,7 @@ export default function Sidebar() {
             <Link
               key={item.id}
               href={item.href}
+              onClick={handleLinkClick}
               className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all text-sm font-medium ${
                 isActive
                   ? 'bg-slate-800 text-white shadow-sm shadow-black/20'
@@ -67,6 +74,7 @@ export default function Sidebar() {
       <div className="p-4 mt-auto border-t border-slate-800 flex flex-col gap-2">
         <Link
           href="/account"
+          onClick={handleLinkClick}
           className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all text-sm font-medium ${
             pathname === '/account' ? 'text-white' : 'hover:text-white'
           }`}
@@ -86,6 +94,16 @@ export default function Sidebar() {
           <span>Logout</span>
         </button>
       </div>
+    </div>
+  );
+
+  if (mobileMode) {
+    return <div className="flex-1 flex flex-col h-full">{content}</div>;
+  }
+
+  return (
+    <aside className="w-64 bg-slate-900 text-slate-300 h-screen sticky top-0 flex flex-col border-r border-slate-800">
+      {content}
     </aside>
   );
 }

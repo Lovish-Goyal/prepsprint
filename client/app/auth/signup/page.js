@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation';
 import { Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
 import axios from 'axios';
 
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+
 export default function SignupPage() {
   const router = useRouter();
   const [fullName, setFullName] = useState('');
@@ -35,7 +37,7 @@ export default function SignupPage() {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:8000/api/auth/register', {
+      const response = await axios.post(`${API_BASE}/auth/register`, {
         email,
         password,
         full_name: fullName,
@@ -44,7 +46,7 @@ export default function SignupPage() {
 
       if (response.data.id) {
         // Automatically log in after registration
-        const loginResponse = await axios.post('http://localhost:8000/api/auth/login', {
+        const loginResponse = await axios.post(`${API_BASE}/auth/login`, {
           email,
           password,
         });

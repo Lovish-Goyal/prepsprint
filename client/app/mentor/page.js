@@ -69,9 +69,9 @@ export default function MentorPage() {
         </p>
       </section>
 
-      <div className="grid lg:grid-cols-4 gap-10 h-[600px]">
+      <div className="flex flex-col lg:grid lg:grid-cols-4 gap-6 lg:gap-10 lg:h-[600px]">
         {/* Chat Main */}
-        <div className="lg:col-span-3 flex flex-col toolkit-card bg-white overflow-hidden h-full">
+        <div className="flex flex-col toolkit-card bg-white overflow-hidden h-[500px] lg:h-full lg:col-span-3">
           <div className="p-4 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center">

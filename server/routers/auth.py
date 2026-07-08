@@ -113,7 +113,9 @@ async def forgot_password(req: ForgotPasswordRequest, db = Depends(get_db)):
         raise HTTPException(status_code=404, detail="No account found with this email address")
     
     token = create_reset_token(req.email)
-    reset_link = f"http://localhost:3000/auth/reset-password?token={token}"
+    import os
+    frontend_url = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").split(",")[0]
+    reset_link = f"{frontend_url}/auth/reset-password?token={token}"
     
     from utils.email import send_reset_email
     success = send_reset_email(req.email, reset_link)

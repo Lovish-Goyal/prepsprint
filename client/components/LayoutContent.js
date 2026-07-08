@@ -5,13 +5,29 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Sidebar from '@/components/Sidebar';
 import { usePathname } from 'next/navigation';
-import { Search, Bell, User, AlertCircle } from 'lucide-react';
+import { Search, Bell, User, AlertCircle, Menu, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 
 export default function LayoutContent({ children }) {
   const { user, loading } = useAuth();
   const pathname = usePathname();
   const [globalCreditWarning, setGlobalCreditWarning] = useState(null);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    setMobileSidebarOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setMobileSidebarOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   useEffect(() => {
     const handleCreditError = (e) => {
@@ -72,11 +88,56 @@ export default function LayoutContent({ children }) {
 
   if (isToolkitPage) {
     return (
-      <div className="flex min-h-screen bg-slate-50">
-        <Sidebar />
+      <div className="flex flex-col lg:flex-row min-h-screen bg-slate-50">
+        {/* Mobile Header Bar */}
+        <header className="lg:hidden bg-slate-900 border-b border-slate-800 text-slate-100 h-[60px] flex items-center justify-between px-6 sticky top-0 z-40">
+          <Link href="/" className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center text-white shadow-md">
+              <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+            <span className="text-lg font-bold text-white tracking-tight">Prep<span className="text-indigo-400">Sprint</span></span>
+          </Link>
+          <button
+            onClick={() => setMobileSidebarOpen(true)}
+            className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition"
+            aria-label="Open navigation menu"
+          >
+            <Menu size={22} />
+          </button>
+        </header>
+
+        {/* Desktop Sidebar (hidden on mobile/tablet) */}
+        <div className="hidden lg:block">
+          <Sidebar />
+        </div>
+
+        {/* Mobile/Tablet Sidebar Drawer Overlay */}
+        {mobileSidebarOpen && (
+          <div className="fixed inset-0 z-50 lg:hidden flex">
+            {/* Backdrop */}
+            <div
+              className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity duration-300"
+              onClick={() => setMobileSidebarOpen(false)}
+            />
+            {/* Drawer */}
+            <div className="relative w-64 bg-slate-900 text-slate-300 h-full flex flex-col border-r border-slate-800 z-50 animate-slide-in">
+              <div className="absolute top-4 right-4">
+                <button
+                  onClick={() => setMobileSidebarOpen(false)}
+                  className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition"
+                  aria-label="Close navigation menu"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+              <Sidebar mobileMode={true} closeDrawer={() => setMobileSidebarOpen(false)} />
+            </div>
+          </div>
+        )}
+
         <div className="flex-1 flex flex-col min-w-0">
-
-
           {globalCreditWarning && (
             <div className="bg-amber-50 border-b border-amber-200 text-amber-800 text-xs px-8 py-3 flex gap-3 items-center justify-between shadow-sm transition-all duration-300">
               <div className="flex gap-2.5 items-center">
@@ -86,7 +147,7 @@ export default function LayoutContent({ children }) {
                   {globalCreditWarning}
                 </div>
               </div>
-              <button 
+              <button
                 onClick={() => setGlobalCreditWarning(null)}
                 className="text-amber-500 hover:text-amber-700 font-bold text-xs uppercase hover:underline outline-none"
               >
@@ -95,7 +156,7 @@ export default function LayoutContent({ children }) {
             </div>
           )}
 
-          <main className="flex-1 p-8 overflow-y-auto overflow-x-hidden">
+          <main className="flex-1 p-4 sm:p-8 overflow-y-auto overflow-x-hidden">
             {children}
           </main>
         </div>

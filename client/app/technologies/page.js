@@ -357,14 +357,21 @@ export default function Technologies() {
               </div>
 
               {/* 4-metric strip */}
-              <div className="grid grid-cols-4 divide-x divide-slate-100 border-t border-slate-100">
+              <div className="grid grid-cols-2 sm:grid-cols-4 border-t border-slate-100">
                 {[
                   { label: 'Avg Salary',   val: selectedTech.salary,       color: 'text-slate-900'   },
                   { label: 'YoY Growth',   val: selectedTech.growth,       color: 'text-emerald-600' },
                   { label: 'Job Listings', val: selectedTech.jobListings,  color: 'text-slate-900'   },
                   { label: 'Difficulty',   val: selectedTech.level,        color: 'text-indigo-700'  },
-                ].map(m => (
-                  <div key={m.label} className="px-4 py-3 text-center">
+                ].map((m, idx) => (
+                  <div
+                    key={m.label}
+                    className={`px-4 py-3 text-center border-slate-100 ${
+                      idx === 1 ? 'border-l' :
+                      idx === 2 ? 'border-t sm:border-t-0 sm:border-l' :
+                      idx === 3 ? 'border-l border-t sm:border-t-0' : ''
+                    }`}
+                  >
                     <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">{m.label}</p>
                     <p className={`text-sm font-black leading-none ${m.color}`}>{m.val}</p>
                   </div>
