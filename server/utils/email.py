@@ -2,6 +2,8 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import os
+import urllib.request
+import json
 
 SMTP_HOST = os.getenv("SMTP_HOST", "smtp.gmail.com")
 SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
@@ -9,6 +11,39 @@ SMTP_USER = os.getenv("EMAIL_USER") or os.getenv("SMTP_USER")
 SMTP_PASSWORD = os.getenv("EMAIL_APP_PASSWORD") or os.getenv("SMTP_PASSWORD")
 
 def send_email(to_email: str, subject: str, html_body: str) -> bool:
+    # 1. Try sending via Resend API if API Key is configured (recommended for Render Free Tier)
+    resend_api_key = os.getenv("RESEND_API_KEY")
+    if resend_api_key:
+        try:
+            url = "https://api.resend.com/emails"
+            headers = {
+                "Authorization": f"Bearer {resend_api_key}",
+                "Content-Type": "application/json"
+            }
+            # Use Resend's free sandbox sender if no custom sender is configured
+            sender = os.getenv("RESEND_SENDER", "PrepSprint <onboarding@resend.dev>")
+            data = {
+                "from": sender,
+                "to": [to_email],
+                "subject": subject,
+                "html": html_body
+            }
+            
+            req = urllib.request.Request(
+                url, 
+                data=json.dumps(data).encode('utf-8'), 
+                headers=headers, 
+                method="POST"
+            )
+            with urllib.request.urlopen(req, timeout=10.0) as response:
+                res_body = response.read()
+                print(f"Resend email sent successfully: {res_body}")
+                return True
+        except Exception as e:
+            print(f"Failed to send email via Resend API: {e}")
+            raise e
+
+    # 2. Fallback to standard SMTP
     if not SMTP_USER or not SMTP_PASSWORD:
         print("SMTP credentials are not configured.")
         return False

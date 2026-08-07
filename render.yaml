@@ -28,6 +28,10 @@ services:
         value: smtp.gmail.com
       - key: SMTP_PORT
         value: 587
+      - key: RESEND_API_KEY
+        sync: false
+      - key: RESEND_SENDER
+        sync: false
 
   # Frontend web service running Next.js
   - type: web
