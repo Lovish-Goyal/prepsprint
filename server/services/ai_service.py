@@ -4,12 +4,13 @@ from openai import OpenAI
 from datetime import datetime
 from fastapi import HTTPException
 
-# Initialize OpenAI client with OpenRouter support
+# Initialize OpenAI client with OpenRouter/Gemini support
 API_KEY = os.getenv('OPENAI_API_KEY', 'your_openai_api_key_here')
 IS_MOCK = API_KEY == 'your_openai_api_key_here' or not API_KEY
 
-# Determine if this is an OpenRouter key
-IS_OPENROUTER = API_KEY.startswith("sk-or-")
+# Determine provider type
+IS_OPENROUTER = API_KEY.startswith("sk-or-") if not IS_MOCK else False
+IS_GEMINI = API_KEY.startswith("AIzaSy") if not IS_MOCK else False
 
 if not IS_MOCK:
     if IS_OPENROUTER:
@@ -22,12 +23,25 @@ if not IS_MOCK:
             }
         )
         DEFAULT_MODEL = os.getenv("OPENROUTER_MODEL", "google/gemini-2.5-flash")
+    elif IS_GEMINI:
+        client = OpenAI(
+            base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+            api_key=API_KEY
+        )
+        DEFAULT_MODEL = os.getenv("GEMINI_MODEL", "gemini-flash-latest")
     else:
         client = OpenAI(api_key=API_KEY)
         DEFAULT_MODEL = os.getenv("OPENAI_MODEL", "gpt-3.5-turbo")
 else:
     client = None
     DEFAULT_MODEL = "mock-mode"
+
+def get_chat_completion(**kwargs):
+    if client is None:
+        return None
+    if IS_GEMINI and "max_tokens" in kwargs:
+        del kwargs["max_tokens"]
+    return client.chat.completions.create(**kwargs)
 
 class AIService:
     @staticmethod
@@ -166,7 +180,7 @@ class AIService:
         if IS_MOCK:
             return AIService._get_mock_response("analyze_resume")
         try:
-            response = client.chat.completions.create(
+            response = get_chat_completion(
                 model=DEFAULT_MODEL,
                 messages=[
                     {"role": "system", "content": "You are a professional resume reviewer. Provide constructive feedback and suggestions for improvement."},
@@ -185,7 +199,7 @@ class AIService:
         if IS_MOCK:
             return AIService._get_mock_response("generate_interview_questions")
         try:
-            response = client.chat.completions.create(
+            response = get_chat_completion(
                 model=DEFAULT_MODEL,
                 messages=[
                     {"role": "system", "content": "You are an expert interview coach. Generate challenging but fair interview questions. Format result as JSON array of objects with 'question' and 'hint' fields."},
@@ -204,7 +218,7 @@ class AIService:
         if IS_MOCK:
             return {"feedback": "Mock feedback: Strong technical explanation, slightly improve clarity.", "status": "success"}
         try:
-            response = client.chat.completions.create(
+            response = get_chat_completion(
                 model=DEFAULT_MODEL,
                 messages=[
                     {"role": "system", "content": "You are an expert interview coach providing constructive feedback on candidate answers."},
@@ -233,7 +247,7 @@ class AIService:
             return {"suggestions": "Mock: Staff Engineer, Solutions Architect.", "status": "success"}
         try:
             skills_str = ', '.join(skills) if skills else "None specified"
-            response = client.chat.completions.create(
+            response = get_chat_completion(
                 model=DEFAULT_MODEL,
                 messages=[
                     {"role": "system", "content": "You are a career counselor specializing in tech careers."},
@@ -1617,7 +1631,7 @@ class AIService:
         
         try:
             response_format = { "type": "json_object" } if not IS_OPENROUTER else None
-            response = client.chat.completions.create(
+            response = get_chat_completion(
                 model=DEFAULT_MODEL,
                 messages=[
                     {"role": "system", "content": system_prompt},
@@ -1706,7 +1720,7 @@ class AIService:
                 
             user_content += "\nIdentify readiness score, matching skills, gaps, suggestions, and provide strategic direction in the exact JSON format specified."
 
-            response = client.chat.completions.create(
+            response = get_chat_completion(
                 model=DEFAULT_MODEL,
                 messages=[
                     {"role": "system", "content": system_prompt},
@@ -1756,7 +1770,7 @@ class AIService:
                 "followed by exactly 3 follow-up suggestions for the user, one per line (do not prefix them with numbers or symbols, "
                 "e.g. 'Explain OOP' or 'Recommend Java roadmap')."
             )
-            response = client.chat.completions.create(
+            response = get_chat_completion(
                 model=DEFAULT_MODEL,
                 messages=[
                     {"role": "system", "content": system_prompt},
@@ -1814,7 +1828,7 @@ class AIService:
             
             messages.append({"role": "user", "content": question})
             
-            response = client.chat.completions.create(
+            response = get_chat_completion(
                 model=DEFAULT_MODEL,
                 messages=messages,
                 temperature=0.8,

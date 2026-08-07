@@ -26,6 +26,31 @@ class UserResponse(BaseModel):
     class Config:
         from_attributes = True
 
+# OTP and Verification Schemas
+class SignupOTPSend(BaseModel):
+    email: EmailStr
+    username: str
+    password: str
+    full_name: str
+
+class SignupOTPVerify(BaseModel):
+    email: EmailStr
+    otp: str
+
+class SignupOTPResend(BaseModel):
+    email: EmailStr
+
+class ForgotPasswordOTPSend(BaseModel):
+    email: EmailStr
+
+class ForgotPasswordOTPVerify(BaseModel):
+    email: EmailStr
+    otp: str
+
+class ForgotPasswordReset(BaseModel):
+    token: str
+    new_password: str
+
 # Skill Schemas
 class SkillCreate(BaseModel):
     name: str
