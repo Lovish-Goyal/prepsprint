@@ -15,19 +15,22 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Add global exception handler to expose detailed errors during testing
-@app.exception_handler(Exception)
-async def global_exception_handler(request: Request, exc: Exception):
-    error_msg = str(exc)
-    error_trace = traceback.format_exc()
-    print(f"Unhandled Exception: {error_msg}\n{error_trace}")
-    return JSONResponse(
-        status_code=500,
-        content={
-            "detail": f"Internal Server Error: {error_msg}",
-            "traceback": error_trace.split("\n")
-        }
-    )
+# Custom exception-catching middleware to ensure CORS headers are added to 500 responses
+@app.middleware("http")
+async def catch_exceptions_middleware(request: Request, call_next):
+    try:
+        return await call_next(request)
+    except Exception as exc:
+        error_msg = str(exc)
+        error_trace = traceback.format_exc()
+        print(f"Unhandled Exception: {error_msg}\n{error_trace}")
+        return JSONResponse(
+            status_code=500,
+            content={
+                "detail": f"Internal Server Error: {error_msg}",
+                "traceback": error_trace.split("\n")
+            }
+        )
 
 # Add CORS middleware
 allowed_origins = os.getenv(
