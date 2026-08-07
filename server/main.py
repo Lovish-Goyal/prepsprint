@@ -3,8 +3,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+import traceback
 from routers import auth, user, skills, roadmap, resume, interview, ai_mentor, skill_tracker, technologies
 
 app = FastAPI(
@@ -12,6 +14,20 @@ app = FastAPI(
     description="AI-powered career development platform API",
     version="1.0.0"
 )
+
+# Add global exception handler to expose detailed errors during testing
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    error_msg = str(exc)
+    error_trace = traceback.format_exc()
+    print(f"Unhandled Exception: {error_msg}\n{error_trace}")
+    return JSONResponse(
+        status_code=500,
+        content={
+            "detail": f"Internal Server Error: {error_msg}",
+            "traceback": error_trace.split("\n")
+        }
+    )
 
 # Add CORS middleware
 allowed_origins = os.getenv(
@@ -22,6 +38,7 @@ allowed_origins = os.getenv(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
+    allow_origin_regex=r"https://.*\.onrender\.com|http://localhost:\d+|http://127\.0\.0\.1:\d+",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
