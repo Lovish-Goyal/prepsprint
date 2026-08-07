@@ -148,13 +148,19 @@ async def signup_send_otp(user_data: SignupOTPSend, db = Depends(get_db)):
     await db.pending_registrations.insert_one(pending_record)
     
     # Send email
-    email_sent = await asyncio.to_thread(send_verification_otp_email, email_clean, otp)
-    if not email_sent:
-        # Cleanup if email fails
+    try:
+        email_sent = await asyncio.to_thread(send_verification_otp_email, email_clean, otp)
+        if not email_sent:
+            await db.pending_registrations.delete_many({"email": email_clean})
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="SMTP credentials are not configured on the server."
+            )
+    except Exception as e:
         await db.pending_registrations.delete_many({"email": email_clean})
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to send verification email. Please try again later."
+            detail=f"Email sending failed: {str(e)}"
         )
         
     return {"message": "Verification OTP sent to your email. Please verify within 10 minutes."}
@@ -288,11 +294,17 @@ async def signup_resend_otp(payload: SignupOTPResend, db = Depends(get_db)):
     )
     
     # Send email
-    email_sent = await asyncio.to_thread(send_verification_otp_email, email_clean, otp)
-    if not email_sent:
+    try:
+        email_sent = await asyncio.to_thread(send_verification_otp_email, email_clean, otp)
+        if not email_sent:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="SMTP credentials are not configured on the server."
+            )
+    except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to send verification email. Please try again later."
+            detail=f"Email sending failed: {str(e)}"
         )
         
     return {"message": "A new verification OTP has been sent to your email."}
@@ -369,12 +381,19 @@ async def forgot_password(req: ForgotPasswordRequest, db = Depends(get_db)):
     await db.password_resets.insert_one(reset_record)
     
     # Send email
-    email_sent = await asyncio.to_thread(send_forgot_password_otp_email, email_clean, otp)
-    if not email_sent:
+    try:
+        email_sent = await asyncio.to_thread(send_forgot_password_otp_email, email_clean, otp)
+        if not email_sent:
+            await db.password_resets.delete_many({"email": email_clean})
+            raise HTTPException(
+                status_code=500,
+                detail="SMTP credentials are not configured on the server."
+            )
+    except Exception as e:
         await db.password_resets.delete_many({"email": email_clean})
         raise HTTPException(
             status_code=500,
-            detail="Failed to send password reset OTP. Please try again later."
+            detail=f"Email sending failed: {str(e)}"
         )
         
     return {"message": "Password reset OTP sent to your email. Please verify within 10 minutes."}

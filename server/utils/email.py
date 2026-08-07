@@ -35,6 +35,7 @@ def send_email(to_email: str, subject: str, html_body: str) -> bool:
         return True
     except Exception as e:
         print(f"Failed to send email to {to_email}: {e}")
+        raise e
         return False
 
 def send_verification_otp_email(to_email: str, otp: str) -> bool:
