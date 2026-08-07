@@ -4,6 +4,7 @@ from datetime import timedelta, datetime, UTC
 import hashlib
 import secrets
 import os
+import asyncio
 from database import get_db
 from schemas.schemas import (
     UserRegister, UserLogin, UserResponse,
@@ -147,7 +148,7 @@ async def signup_send_otp(user_data: SignupOTPSend, db = Depends(get_db)):
     await db.pending_registrations.insert_one(pending_record)
     
     # Send email
-    email_sent = send_verification_otp_email(email_clean, otp)
+    email_sent = await asyncio.to_thread.run(send_verification_otp_email, email_clean, otp)
     if not email_sent:
         # Cleanup if email fails
         await db.pending_registrations.delete_many({"email": email_clean})
@@ -287,7 +288,7 @@ async def signup_resend_otp(payload: SignupOTPResend, db = Depends(get_db)):
     )
     
     # Send email
-    email_sent = send_verification_otp_email(email_clean, otp)
+    email_sent = await asyncio.to_thread.run(send_verification_otp_email, email_clean, otp)
     if not email_sent:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -368,7 +369,7 @@ async def forgot_password(req: ForgotPasswordRequest, db = Depends(get_db)):
     await db.password_resets.insert_one(reset_record)
     
     # Send email
-    email_sent = send_forgot_password_otp_email(email_clean, otp)
+    email_sent = await asyncio.to_thread.run(send_forgot_password_otp_email, email_clean, otp)
     if not email_sent:
         await db.password_resets.delete_many({"email": email_clean})
         raise HTTPException(
