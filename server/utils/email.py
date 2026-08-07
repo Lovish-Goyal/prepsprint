@@ -3,6 +3,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import os
 import urllib.request
+import urllib.error
 import json
 
 SMTP_HOST = os.getenv("SMTP_HOST", "smtp.gmail.com")
@@ -18,7 +19,8 @@ def send_email(to_email: str, subject: str, html_body: str) -> bool:
             url = "https://api.resend.com/emails"
             headers = {
                 "Authorization": f"Bearer {resend_api_key}",
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "User-Agent": "PrepSprint-App/1.0"
             }
             # Use Resend's free sandbox sender if no custom sender is configured
             sender = os.getenv("RESEND_SENDER", "PrepSprint <onboarding@resend.dev>")
@@ -39,6 +41,18 @@ def send_email(to_email: str, subject: str, html_body: str) -> bool:
                 res_body = response.read()
                 print(f"Resend email sent successfully: {res_body}")
                 return True
+        except urllib.error.HTTPError as http_err:
+            try:
+                error_body = http_err.read().decode('utf-8')
+                print(f"Resend HTTP Error {http_err.code}: {error_body}")
+                try:
+                    err_json = json.loads(error_body)
+                    error_msg = err_json.get("message", error_body)
+                except Exception:
+                    error_msg = error_body
+                raise Exception(f"Resend API Error (HTTP {http_err.code}): {error_msg}")
+            except Exception as read_err:
+                raise Exception(f"Resend HTTP Error {http_err.code}: {http_err.reason}") from http_err
         except Exception as e:
             print(f"Failed to send email via Resend API: {e}")
             raise e
