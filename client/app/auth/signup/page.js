@@ -71,6 +71,7 @@ export default function SignupPage() {
       setOtpSuccess('Verification code sent to your email.');
       setResendCooldown(60);
     } catch (err) {
+      console.error("Signup Error:", err.response?.data || err);
       setError(err.response?.data?.detail || 'Registration failed. Please try again.');
     } finally {
       setLoading(false);
@@ -106,6 +107,7 @@ export default function SignupPage() {
         router.push('/dashboard');
       }
     } catch (err) {
+      console.error("Verify OTP Error:", err.response?.data || err);
       setOtpError(err.response?.data?.detail || 'Verification failed. Please check the code and try again.');
     } finally {
       setOtpLoading(false);
@@ -126,6 +128,7 @@ export default function SignupPage() {
       setOtpSuccess('A new verification code has been sent to your email.');
       setResendCooldown(60);
     } catch (err) {
+      console.error("Resend OTP Error:", err.response?.data || err);
       setOtpError(err.response?.data?.detail || 'Failed to resend code. Please try again.');
     } finally {
       setOtpLoading(false);
