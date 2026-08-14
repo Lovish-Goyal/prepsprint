@@ -53,7 +53,7 @@ export default function Roadmap() {
           err.response.data.detail.toLowerCase().includes("max_tokens")
         ));
       if (isCreditErr) {
-        setCreditError(err.response?.data?.detail || "AI Provider Credits Exceeded: Please recharge your OpenRouter credit balance to enable live generations.");
+        setCreditError(err.response?.data?.detail || "Limit Exceeded: Please retry after some time.");
       } else {
         setError(err.response?.data?.detail || "Failed to generate roadmap. Please check your connection and try again.");
       }

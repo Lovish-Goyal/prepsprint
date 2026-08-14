@@ -1,17 +1,198 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import {
   ArrowRight, FileText, Map, Users, Layers, Sparkles,
   Compass, CheckCircle2, Brain, BarChart3, Star, MessageSquare,
-  ChevronRight, Zap, Target, Globe
+  ChevronRight, ChevronLeft, Zap, Target, Globe
 } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
+
+const TESTIMONIALS_DATA = [
+  {
+    quote: "I was stuck in tutorial hell for over a year. PrepSprint gave me a clear roadmap and within 4 months I landed my first frontend role. The structured approach changed everything.",
+    name: "Riya Sharma",
+    role: "Frontend Engineer at Razorpay",
+    stars: 5
+  },
+  {
+    quote: "The AI resume builder alone is worth it. I went from getting zero callbacks to three interviews in my first week after rebuilding my resume with PrepSprint.",
+    name: "Aman Gupta",
+    role: "Backend Developer at Flipkart",
+    stars: 5
+  },
+  {
+    quote: "As a career switcher from marketing to tech, I had no idea where to start. The mentor support and step-by-step roadmap made the transition feel manageable and real.",
+    name: "Priya Mehta",
+    role: "Full Stack Developer",
+    stars: 5
+  },
+  {
+    quote: "PrepSprint's tech stack planner helped me understand exactly what to learn for my target role. No more wasting time on irrelevant tutorials.",
+    name: "Karthik R.",
+    role: "Data Engineer at Swiggy",
+    stars: 5
+  },
+  {
+    quote: "I loved the AI-powered mock interviews. The feedback was extremely actionable and pinpointed exactly where I was failing the STAR method.",
+    name: "Vikram Singh",
+    role: "Software Engineer II at Microsoft",
+    stars: 5
+  },
+  {
+    quote: "The depth of the tech discovery protocol is insane. We use these architectural primitives to make critical engineering choices daily.",
+    name: "Devika Menon",
+    role: "Lead Developer at Freshworks",
+    stars: 5
+  },
+  {
+    quote: "I followed the Rust & systems roadmap religiously. Six months later, I cleared the systems interview at a tier-1 tech firm. Extremely structured.",
+    name: "Siddharth Roy",
+    role: "Systems Engineer",
+    stars: 5
+  },
+  {
+    quote: "Being able to visualize my progress using the skills tracker kept me motivated. The learning insights and progress rings are incredibly accurate.",
+    name: "Anjali Verma",
+    role: "Full Stack Engineer at Zomato",
+    stars: 5
+  },
+  {
+    quote: "PrepSprint was exactly what I needed to switch to a DevOps role. The Kubernetes and Terraform roadmap was completely production-aligned.",
+    name: "Rahul Nair",
+    role: "DevOps Engineer",
+    stars: 5
+  },
+  {
+    quote: "I built my confidence from ground zero with PrepSprint's AI career mentor. It's like having a senior engineer in your corner 24/7.",
+    name: "Shreya Patel",
+    role: "Software SDE at Jio",
+    stars: 5
+  },
+  {
+    quote: "The future scope market intelligence section let me pivot from simple web development to high-demand LLM engineering. Truly premium.",
+    name: "Kunal Kapoor",
+    role: "AI Engineer",
+    stars: 5
+  },
+  {
+    quote: "From creating my resume to passing the final architectural round, PrepSprint's separated modules had everything ready for me.",
+    name: "Neha Saxena",
+    role: "Technical Lead",
+    stars: 5
+  },
+  {
+    quote: "PrepSprint completely removes tutorial paralysis. Having specific weekly deliverables makes career advancement effortless.",
+    name: "Arjun Das",
+    role: "Senior Developer",
+    stars: 5
+  },
+  {
+    quote: "Their ATS-optimized resume builder gave me an 85%+ match on my target backend roles. My callback rates tripled instantly.",
+    name: "Sanjay Rao",
+    role: "Backend Engineer at Ola",
+    stars: 5
+  },
+  {
+    quote: "The interview feedback pinpointed my lack of clarity around complex system architectures. I passed my Google SDE interview because of it!",
+    name: "Tanvi Goel",
+    role: "SDE III at Google",
+    stars: 5
+  },
+  {
+    quote: "PrepSprint didn't just teach me what to learn—it gave me the exact timing and sequencing for every single technology.",
+    name: "Sameer Khan",
+    role: "Mobile Engineer at Swiggy",
+    stars: 5
+  },
+  {
+    quote: "No other platform matches the precision of PrepSprint's interactive skills analyzer. Pure engineering signal, zero noise.",
+    name: "Nidhi Bhatt",
+    role: "Data Platform Lead",
+    stars: 5
+  },
+  {
+    quote: "The UI is so beautiful and responsive. It's incredibly motivating to come here every morning and update my tracking.",
+    name: "Ishaan Joshi",
+    role: "UI/UX Developer",
+    stars: 5
+  },
+  {
+    quote: "I was able to map out my transition to Cloud Native architecture perfectly using the high-fidelity blueprints.",
+    name: "Rohan Bansal",
+    role: "Solutions Architect",
+    stars: 5
+  },
+  {
+    quote: "PrepSprint provides the clearest path to senior roles. The architectural dilemma and leadership blueprints are invaluable.",
+    name: "Meera Iyer",
+    role: "Principal SDE",
+    stars: 5
+  }
+];
 
 export default function LandingPage() {
   const { user } = useAuth();
   const [activeModalFeature, setActiveModalFeature] = useState(null);
+
+  // Carousel State & Logic
+  const [activeDot, setActiveDot] = useState(0);
+  const [cardsPerPage, setCardsPerPage] = useState(1);
+  const carouselRef = useRef(null);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setCardsPerPage(3);
+      } else if (window.innerWidth >= 768) {
+        setCardsPerPage(2);
+      } else {
+        setCardsPerPage(1);
+      }
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const handleScroll = (direction) => {
+    if (carouselRef.current) {
+      const container = carouselRef.current;
+      const scrollAmount = container.clientWidth;
+      const targetScroll = direction === 'left' 
+        ? container.scrollLeft - scrollAmount 
+        : container.scrollLeft + scrollAmount;
+      container.scrollTo({
+        left: targetScroll,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  const scrollToGroup = (dotIdx) => {
+    if (carouselRef.current) {
+      const container = carouselRef.current;
+      const scrollAmount = dotIdx * container.clientWidth;
+      container.scrollTo({
+        left: scrollAmount,
+        behavior: 'smooth'
+      });
+      setActiveDot(dotIdx);
+    }
+  };
+
+  const updateActiveDot = () => {
+    if (carouselRef.current) {
+      const { scrollLeft, clientWidth } = carouselRef.current;
+      const index = Math.round(scrollLeft / (clientWidth || 1));
+      const totalDots = Math.ceil(TESTIMONIALS_DATA.length / cardsPerPage);
+      const dotIndex = Math.min(totalDots - 1, index);
+      if (dotIndex >= 0) {
+        setActiveDot(dotIndex);
+      }
+    }
+  };
 
   return (
     <div className="w-full overflow-hidden">
@@ -23,23 +204,23 @@ export default function LandingPage() {
         <div className="glow-blob w-[500px] h-[500px] bg-violet-500 top-60 -left-40 opacity-20" />
         <div className="glow-blob w-[300px] h-[300px] bg-blue-400 bottom-20 right-1/4 opacity-15" />
 
-        <div className="relative z-10 mx-auto w-full max-w-[1440px] px-6 md:px-12">
+        <div className="relative z-10 mx-auto w-full max-w-[1440px] px-4 md:px-12">
           <div className="max-w-4xl">
             <div className="fade-in inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50/80 px-5 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-blue-700 backdrop-blur-sm">
               <Sparkles size={13} /> Career Acceleration Platform
             </div>
 
-            <h1 className="fade-in fade-in-d1 mt-8 text-5xl font-extrabold leading-[1.05] tracking-tight text-slate-900 md:text-6xl lg:text-7xl xl:text-[5.2rem]">
+            <h1 className="fade-in fade-in-d1 mt-6 text-3xl sm:text-4xl md:text-6xl lg:text-7xl xl:text-[5.2rem] font-extrabold leading-[1.15] md:leading-[1.05] tracking-tight text-slate-900">
               Build Your Tech Career
               <br />
               <span className="gradient-text">With Structure, Not Guesswork</span>
             </h1>
 
-            <p className="fade-in fade-in-d2 mt-8 max-w-2xl text-lg leading-relaxed text-slate-500 md:text-xl md:leading-relaxed">
+            <p className="fade-in fade-in-d2 mt-4 md:mt-8 max-w-2xl text-base sm:text-lg md:text-xl leading-relaxed text-slate-500 md:leading-relaxed">
               Create resumes, follow personalized roadmaps, master tech stacks, and connect with mentors — all in one focused workspace designed to accelerate your career.
             </p>
 
-            <div className="fade-in fade-in-d3 mt-10 flex flex-wrap items-center gap-4">
+            <div className="fade-in fade-in-d3 mt-6 md:mt-10 flex flex-wrap items-center gap-4">
               <Link
                 href={user ? '/dashboard' : '/auth/signup'}
                 className="premium-btn inline-flex items-center gap-2.5 rounded-2xl px-8 py-4 text-base font-semibold text-white"
@@ -60,7 +241,7 @@ export default function LandingPage() {
       </section>
 
       <section className="relative border-y border-slate-200/60 bg-white">
-        <div className="mx-auto grid w-full max-w-[1440px] gap-0 divide-y divide-slate-100 px-6 md:px-12 py-0 sm:grid-cols-2 sm:divide-x sm:divide-y-0 lg:grid-cols-4">
+        <div className="mx-auto grid w-full max-w-[1440px] grid-cols-2 gap-px bg-slate-200/30 px-4 md:px-12 sm:grid-cols-2 lg:grid-cols-4">
           <StatBlock value="12K+" label="Roadmaps Created" />
           <StatBlock value="94%" label="Interview Readiness" />
           <StatBlock value="3.2x" label="Average Skill Growth" />
@@ -69,17 +250,17 @@ export default function LandingPage() {
       </section>
 
       {/* ═══════════════════ 3. FEATURES ═══════════════════ */}
-      <section className="relative px-6 py-10 md:py-14">
+      <section className="relative px-4 py-8 md:py-14">
         <div className="glow-blob w-[400px] h-[400px] bg-blue-400 -top-20 left-1/3 opacity-15" />
 
-        <div className="relative z-10 mx-auto max-w-[1440px] px-6 md:px-12">
+        <div className="relative z-10 mx-auto max-w-[1440px] px-4 md:px-12">
           <SectionHeader
             tag="Core Features"
             title="Everything You Need to Succeed"
             subtitle="Six powerful modules designed to take you from zero to hired — structured, guided, and measurable."
           />
 
-          <div className="mt-16 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-12 md:mt-16 grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
             <FeatureCard
               icon={<FileText size={28} />}
               title="AI Resume Builder"
@@ -129,15 +310,15 @@ export default function LandingPage() {
       <div className="section-divider mx-auto max-w-5xl" />
 
       {/* ═══════════════════ 4. HOW IT WORKS ═══════════════════ */}
-      <section className="px-6 py-10 md:py-14">
-        <div className="mx-auto max-w-[1440px] px-6 md:px-12">
+      <section className="px-4 py-8 md:py-14">
+        <div className="mx-auto max-w-[1440px] px-4 md:px-12">
           <SectionHeader
             tag="How It Works"
             title="From Confusion to Clarity in 4 Steps"
             subtitle="A simple, repeatable process that turns ambition into action."
           />
 
-          <div className="mt-16 grid gap-0 md:grid-cols-4">
+          <div className="mt-12 md:mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-0">
             <StepCard
               num="01"
               title="Choose Career Goal"
@@ -169,17 +350,17 @@ export default function LandingPage() {
       <div className="section-divider mx-auto max-w-5xl" />
 
       {/* ═══════════════════ 5. WHY PREPSPRINT ═══════════════════ */}
-      <section className="relative px-6 py-10 md:py-14">
+      <section className="relative px-4 py-8 md:py-14">
         <div className="glow-blob w-[500px] h-[500px] bg-violet-400 bottom-0 right-0 opacity-10" />
 
-        <div className="relative z-10 mx-auto max-w-[1440px] px-6 md:px-12">
+        <div className="relative z-10 mx-auto max-w-[1440px] px-4 md:px-12">
           <SectionHeader
             tag="Why PrepSprint"
             title="The Smarter Way to Build Your Career"
             subtitle="Stop wasting months on scattered tutorials. Start making real, measurable progress."
           />
 
-          <div className="mt-16 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-12 md:mt-16 grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
             <BenefitCard
               icon={<Compass size={24} />}
               title="Eliminate Confusion"
@@ -207,9 +388,9 @@ export default function LandingPage() {
       <div className="section-divider mx-auto max-w-5xl" />
 
       {/* ═══════════════════ 6. ABOUT PREVIEW ═══════════════════ */}
-      <section className="px-6 py-10 md:py-14">
-        <div className="mx-auto max-w-[1440px] px-6 md:px-12">
-          <div className="rounded-[2rem] border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-10 md:p-16 shadow-[0_32px_64px_-24px_rgba(15,23,42,.08)]">
+      <section className="px-4 py-8 md:py-14">
+        <div className="mx-auto max-w-[1440px] px-4 md:px-12">
+          <div className="rounded-[2rem] border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-6 md:p-16 shadow-[0_32px_64px_-24px_rgba(15,23,42,.08)]">
             <p className="text-sm font-bold uppercase tracking-[0.15em] text-blue-600">Our Mission</p>
             <h2 className="mt-5 text-3xl font-extrabold tracking-tight text-slate-900 md:text-4xl lg:text-5xl leading-tight">
               Helping students and developers transition into tech careers with clarity, structure, and guidance.
@@ -233,135 +414,80 @@ export default function LandingPage() {
       <div className="section-divider mx-auto max-w-5xl" />
 
       {/* ═══════════════════ 7. TESTIMONIALS ═══════════════════ */}
-      <section className="px-6 py-10 md:py-14">
-        <div className="mx-auto max-w-[1440px] px-6 md:px-12">
+      <section className="px-4 py-8 md:py-14 relative overflow-hidden bg-slate-50/50">
+        <div className="glow-blob w-[500px] h-[500px] bg-blue-100 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-35" />
+
+        <div className="relative z-10 mx-auto max-w-[1440px] px-4 md:px-12">
           <SectionHeader
             tag="Testimonials"
             title="Trusted by Developers Worldwide"
             subtitle="Real stories from real people who transformed their careers with PrepSprint."
           />
 
-          <div className="mt-16 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            <TestimonialCard
-              quote="I was stuck in tutorial hell for over a year. PrepSprint gave me a clear roadmap and within 4 months I landed my first frontend role. The structured approach changed everything."
-              name="Riya Sharma"
-              role="Frontend Engineer at Razorpay"
-              stars={5}
-            />
-            <TestimonialCard
-              quote="The AI resume builder alone is worth it. I went from getting zero callbacks to three interviews in my first week after rebuilding my resume with PrepSprint."
-              name="Aman Gupta"
-              role="Backend Developer at Flipkart"
-              stars={5}
-            />
-            <TestimonialCard
-              quote="As a career switcher from marketing to tech, I had no idea where to start. The mentor support and step-by-step roadmap made the transition feel manageable and real."
-              name="Priya Mehta"
-              role="Full Stack Developer"
-              stars={5}
-            />
-            <TestimonialCard
-              quote="PrepSprint's tech stack planner helped me understand exactly what to learn for my target role. No more wasting time on irrelevant tutorials."
-              name="Karthik R."
-              role="Data Engineer at Swiggy"
-              stars={5}
-            />
-            <TestimonialCard
-              quote="I loved the AI-powered mock interviews. The feedback was extremely actionable and pinpointed exactly where I was failing the STAR method."
-              name="Vikram Singh"
-              role="Software Engineer II at Microsoft"
-              stars={5}
-            />
-            <TestimonialCard
-              quote="The depth of the tech discovery protocol is insane. We use these architectural primitives to make critical engineering choices daily."
-              name="Devika Menon"
-              role="Lead Developer at Freshworks"
-              stars={5}
-            />
-            <TestimonialCard
-              quote="I followed the Rust & systems roadmap religiously. Six months later, I cleared the systems interview at a tier-1 tech firm. Extremely structured."
-              name="Siddharth Roy"
-              role="Systems Engineer"
-              stars={5}
-            />
-            <TestimonialCard
-              quote="Being able to visualize my progress using the skills tracker kept me motivated. The learning insights and progress rings are incredibly accurate."
-              name="Anjali Verma"
-              role="Full Stack Engineer at Zomato"
-              stars={5}
-            />
-            <TestimonialCard
-              quote="PrepSprint was exactly what I needed to switch to a DevOps role. The Kubernetes and Terraform roadmap was completely production-aligned."
-              name="Rahul Nair"
-              role="DevOps Engineer"
-              stars={5}
-            />
-            <TestimonialCard
-              quote="I built my confidence from ground zero with PrepSprint's AI career mentor. It's like having a senior engineer in your corner 24/7."
-              name="Shreya Patel"
-              role="Software SDE at Jio"
-              stars={5}
-            />
-            <TestimonialCard
-              quote="The future scope market intelligence section let me pivot from simple web development to high-demand LLM engineering. Truly premium."
-              name="Kunal Kapoor"
-              role="AI Engineer"
-              stars={5}
-            />
-            <TestimonialCard
-              quote="From creating my resume to passing the final architectural round, PrepSprint's separated modules had everything ready for me."
-              name="Neha Saxena"
-              role="Technical Lead"
-              stars={5}
-            />
-            <TestimonialCard
-              quote="PrepSprint completely removes tutorial paralysis. Having specific weekly deliverables makes career advancement effortless."
-              name="Arjun Das"
-              role="Senior Developer"
-              stars={5}
-            />
-            <TestimonialCard
-              quote="Their ATS-optimized resume builder gave me an 85%+ match on my target backend roles. My callback rates tripled instantly."
-              name="Sanjay Rao"
-              role="Backend Engineer at Ola"
-              stars={5}
-            />
-            <TestimonialCard
-              quote="The interview feedback pinpointed my lack of clarity around complex system architectures. I passed my Google SDE interview because of it!"
-              name="Tanvi Goel"
-              role="SDE III at Google"
-              stars={5}
-            />
-            <TestimonialCard
-              quote="PrepSprint didn't just teach me what to learn—it gave me the exact timing and sequencing for every single technology."
-              name="Sameer Khan"
-              role="Mobile Engineer at Swiggy"
-              stars={5}
-            />
-            <TestimonialCard
-              quote="No other platform matches the precision of PrepSprint's interactive skills analyzer. Pure engineering signal, zero noise."
-              name="Nidhi Bhatt"
-              role="Data Platform Lead"
-              stars={5}
-            />
-            <TestimonialCard
-              quote="The UI is so beautiful and responsive. It's incredibly motivating to come here every morning and update my tracking."
-              name="Ishaan Joshi"
-              role="UI/UX Developer"
-              stars={5}
-            />
-            <TestimonialCard
-              quote="I was able to map out my transition to Cloud Native architecture perfectly using the high-fidelity blueprints."
-              name="Rohan Bansal"
-              role="Solutions Architect"
-              stars={5}
-            />
-            <TestimonialCard
-              quote="PrepSprint provides the clearest path to senior roles. The architectural dilemma and leadership blueprints are invaluable."
-              name="Meera Iyer"
-              role="Principal SDE"
-              stars={5}
-            />
+          {/* Carousel Wrapper */}
+          <div className="relative mt-12 md:mt-16 group/carousel">
+            {/* Fade Gradients for Desktop */}
+            <div className="absolute top-0 bottom-0 left-0 w-16 bg-gradient-to-r from-slate-50/50 to-transparent z-10 pointer-events-none hidden md:block" />
+            <div className="absolute top-0 bottom-0 right-0 w-16 bg-gradient-to-l from-slate-50/50 to-transparent z-10 pointer-events-none hidden md:block" />
+
+            {/* Nav Buttons */}
+            <button
+              onClick={() => handleScroll('left')}
+              className="absolute left-2 top-1/2 -translate-y-1/2 z-20 flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white/90 text-slate-700 shadow-md backdrop-blur-sm transition-all hover:bg-blue-600 hover:text-white hover:border-blue-600 active:scale-95 md:opacity-0 md:group-hover/carousel:opacity-100 focus:opacity-100 md:left-4"
+              aria-label="Previous testimonials"
+            >
+              <ChevronLeft size={20} />
+            </button>
+            
+            <button
+              onClick={() => handleScroll('right')}
+              className="absolute right-2 top-1/2 -translate-y-1/2 z-20 flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white/90 text-slate-700 shadow-md backdrop-blur-sm transition-all hover:bg-blue-600 hover:text-white hover:border-blue-600 active:scale-95 md:opacity-0 md:group-hover/carousel:opacity-100 focus:opacity-100 md:right-4"
+              aria-label="Next testimonials"
+            >
+              <ChevronRight size={20} />
+            </button>
+
+            {/* Scrollable Container */}
+            <div
+              ref={carouselRef}
+              onScroll={updateActiveDot}
+              className="flex gap-4 md:gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-8 pt-4 px-2 scrollbar-none"
+              style={{
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none',
+                WebkitOverflowScrolling: 'touch'
+              }}
+            >
+              {TESTIMONIALS_DATA.map((t, idx) => (
+                <div 
+                  key={idx} 
+                  className="w-[280px] xs:w-[320px] md:w-[380px] shrink-0 snap-start h-auto"
+                >
+                  <TestimonialCard
+                    quote={t.quote}
+                    name={t.name}
+                    role={t.role}
+                    stars={t.stars}
+                  />
+                </div>
+              ))}
+            </div>
+
+            {/* Progress / Dot Indicators */}
+            <div className="mt-4 hidden md:flex justify-center gap-2">
+              {Array.from({ length: Math.ceil(TESTIMONIALS_DATA.length / cardsPerPage) }).map((_, dotIdx) => (
+                <button
+                  key={dotIdx}
+                  onClick={() => scrollToGroup(dotIdx)}
+                  className={`h-2.5 rounded-full transition-all duration-300 ${
+                    activeDot === dotIdx 
+                      ? 'w-6 bg-blue-600' 
+                      : 'w-2.5 bg-slate-200 hover:bg-slate-300'
+                  }`}
+                  aria-label={`Go to slide page ${dotIdx + 1}`}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -369,7 +495,7 @@ export default function LandingPage() {
       <div className="section-divider mx-auto max-w-5xl" />
 
       {/* ═══════════════════ 8. CONTACT PREVIEW ═══════════════════ */}
-      <section className="px-6 py-10 md:py-14">
+      <section className="px-4 py-8 md:py-14">
         <div className="mx-auto max-w-3xl text-center">
           <p className="text-sm font-bold uppercase tracking-[0.15em] text-blue-600">Get in Touch</p>
           <h2 className="mt-5 text-3xl font-extrabold tracking-tight text-slate-900 md:text-4xl">
@@ -471,9 +597,9 @@ function SectionHeader({ tag, title, subtitle }) {
 
 function StatBlock({ value, label }) {
   return (
-    <div className="flex flex-col items-center justify-center px-6 py-10 text-center">
-      <p className="text-4xl font-extrabold tracking-tight text-slate-900 md:text-5xl">{value}</p>
-      <p className="mt-2 text-sm font-medium text-slate-500">{label}</p>
+    <div className="flex flex-col items-center justify-center px-4 py-6 md:py-10 text-center bg-white">
+      <p className="text-2xl md:text-5xl font-extrabold tracking-tight text-slate-900">{value}</p>
+      <p className="mt-2 text-xs md:text-sm font-medium text-slate-500">{label}</p>
     </div>
   );
 }
@@ -490,19 +616,21 @@ const featureColors = {
 function FeatureCard({ icon, title, description, color = 'blue', onClick }) {
   const c = featureColors[color];
   return (
-    <article className={`card-hover group rounded-3xl border ${c.border} bg-white p-8 md:p-10 flex flex-col justify-between`}>
+    <article className={`card-hover group rounded-2xl md:rounded-3xl border ${c.border} bg-white p-4 md:p-10 flex flex-col justify-between`}>
       <div>
-        <div className={`mb-6 inline-flex h-14 w-14 items-center justify-center rounded-2xl ${c.bg} text-white shadow-lg transition-transform group-hover:scale-110`}>
-          {icon}
+        <div className={`mb-4 md:mb-6 inline-flex h-10 w-10 md:h-14 md:w-14 items-center justify-center rounded-xl md:rounded-2xl ${c.bg} text-white shadow-lg transition-transform group-hover:scale-110`}>
+          <div className="flex items-center justify-center [&>svg]:w-5 [&>svg]:h-5 md:[&>svg]:w-7 md:[&>svg]:h-7">
+            {icon}
+          </div>
         </div>
-        <h3 className="text-2xl font-bold text-slate-900">{title}</h3>
-        <p className="mt-4 text-base leading-relaxed text-slate-500">{description}</p>
+        <h3 className="text-base md:text-2xl font-bold text-slate-900 tracking-tight">{title}</h3>
+        <p className="mt-2 md:mt-4 text-[11px] md:text-base leading-relaxed text-slate-500 line-clamp-3 md:line-clamp-none">{description}</p>
       </div>
       <button 
         onClick={onClick}
-        className={`mt-6 inline-flex items-center gap-1.5 text-sm font-semibold ${c.text} hover:underline w-fit text-left outline-none`}
+        className={`mt-4 md:mt-6 inline-flex items-center gap-1 text-[11px] md:text-sm font-semibold ${c.text} hover:underline w-fit text-left outline-none`}
       >
-        Learn more <ChevronRight size={14} />
+        Learn more <ChevronRight className="w-3 h-3 md:w-3.5 md:h-3.5" />
       </button>
     </article>
   );
@@ -579,51 +707,51 @@ const FEATURE_DETAILS = {
 
 function StepCard({ num, title, description, isLast }) {
   return (
-    <div className="relative flex flex-col items-center px-6 py-10 text-center">
+    <div className="relative flex flex-col items-center px-4 py-6 md:py-10 text-center">
       {/* Connector line */}
       {!isLast && (
         <div className="absolute right-0 top-1/2 hidden h-px w-full -translate-y-1/2 bg-gradient-to-r from-transparent via-blue-200 to-transparent md:block" />
       )}
 
-      <div className="stat-glow relative z-10 mb-6 grid h-16 w-16 place-items-center rounded-full bg-blue-600 text-lg font-bold text-white">
+      <div className="stat-glow relative z-10 mb-4 md:mb-6 grid h-12 w-12 md:h-16 md:w-16 place-items-center rounded-full bg-blue-600 text-base md:text-lg font-bold text-white">
         {num}
       </div>
-      <h3 className="text-xl font-bold text-slate-900">{title}</h3>
-      <p className="mt-3 text-sm leading-relaxed text-slate-500">{description}</p>
+      <h3 className="text-lg md:text-xl font-bold text-slate-900">{title}</h3>
+      <p className="mt-2 md:mt-3 text-xs md:text-sm leading-relaxed text-slate-500">{description}</p>
     </div>
   );
 }
 
 function BenefitCard({ icon, title, description }) {
   return (
-    <article className="card-hover rounded-3xl border border-slate-200 bg-gradient-to-br from-white to-slate-50/80 p-8">
-      <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+    <article className="card-hover rounded-2xl md:rounded-3xl border border-slate-200 bg-gradient-to-br from-white to-slate-50/80 p-5 md:p-8">
+      <div className="mb-4 md:mb-5 inline-flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-600 [&>svg]:w-5 [&>svg]:h-5 md:[&>svg]:w-6 md:[&>svg]:h-6">
         {icon}
       </div>
-      <h3 className="text-lg font-bold text-slate-900">{title}</h3>
-      <p className="mt-3 text-sm leading-relaxed text-slate-500">{description}</p>
+      <h3 className="text-base md:text-lg font-bold text-slate-900">{title}</h3>
+      <p className="mt-2 md:mt-3 text-xs md:text-sm leading-relaxed text-slate-500">{description}</p>
     </article>
   );
 }
 
 function TestimonialCard({ quote, name, role, stars = 5 }) {
   return (
-    <article className="card-hover flex flex-col justify-between rounded-3xl border border-slate-200 bg-white p-8">
+    <article className="card-hover flex flex-col justify-between rounded-2xl md:rounded-3xl border border-slate-200 bg-white p-5 md:p-8 h-full">
       <div>
-        <div className="mb-5 flex gap-1">
+        <div className="mb-4 md:mb-5 flex gap-1">
           {Array.from({ length: stars }).map((_, i) => (
             <Star key={i} size={16} className="fill-amber-400 text-amber-400" />
           ))}
         </div>
-        <p className="text-base leading-relaxed text-slate-600">"{quote}"</p>
+        <p className="text-sm md:text-base leading-relaxed text-slate-600">"{quote}"</p>
       </div>
-      <div className="mt-8 flex items-center gap-3">
-        <div className="grid h-10 w-10 place-items-center rounded-full bg-blue-100 text-sm font-bold text-blue-700">
+      <div className="mt-6 md:mt-8 flex items-center gap-3">
+        <div className="grid h-8 w-8 md:h-10 md:w-10 place-items-center rounded-full bg-blue-100 text-xs md:text-sm font-bold text-blue-700">
           {name.charAt(0)}
         </div>
         <div>
-          <p className="text-sm font-semibold text-slate-900">{name}</p>
-          <p className="text-xs text-slate-500">{role}</p>
+          <p className="text-xs md:text-sm font-semibold text-slate-900">{name}</p>
+          <p className="text-[10px] md:text-xs text-slate-500">{role}</p>
         </div>
       </div>
     </article>

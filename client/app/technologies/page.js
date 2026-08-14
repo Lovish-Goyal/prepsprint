@@ -4,6 +4,15 @@ import { useState, useEffect } from 'react';
 import * as Icons from 'lucide-react';
 import { TECHS, CATEGORIES } from './data';
 
+const formatSalaryToINR = (usdStr) => {
+  if (!usdStr) return '';
+  return usdStr.replace(/\$?(\d+)[kK]/g, (match, p1) => {
+    const usdK = parseInt(p1, 10);
+    const inrLakh = Math.round(usdK * 0.83);
+    return `₹${inrLakh}L`;
+  });
+};
+
 // ── Per-category color system ─────────────────────────────────────────────────
 const CAT_STYLE = {
   'All':               { pill: 'bg-slate-900 text-white border-slate-900',         bar: 'bg-slate-500',   badge: 'bg-slate-100 text-slate-700 border-slate-200',    icon: 'LayoutGrid' },
@@ -149,7 +158,7 @@ export default function Technologies() {
               {[
                 { label: 'Demand',     val: spotlight.demand,                      green: false },
                 { label: 'YoY Growth', val: spotlight.growth,                      green: true  },
-                { label: 'Avg Salary', val: `${spotlight.salary?.split('-')[0]}+`,  green: false },
+                { label: 'Avg Salary', val: `${formatSalaryToINR(spotlight.salary?.split('-')[0])}+`,  green: false },
               ].map(m => (
                 <div key={m.label} className="text-center">
                   <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">{m.label}</p>
@@ -280,7 +289,7 @@ export default function Technologies() {
                     <DemandBar demand={tech.demand} category={tech.category} />
                   </div>
                   <div className="w-28 hidden md:flex justify-center">
-                    <span className="text-xs font-bold text-slate-700 tabular-nums">{tech.salary}</span>
+                    <span className="text-xs font-bold text-slate-700 tabular-nums">{formatSalaryToINR(tech.salary)}</span>
                   </div>
                   <div className="w-16 flex items-center justify-end gap-1.5">
                     <span className="text-xs font-black text-emerald-600 tabular-nums">{tech.growth}</span>
@@ -359,7 +368,7 @@ export default function Technologies() {
               {/* 4-metric strip */}
               <div className="grid grid-cols-2 sm:grid-cols-4 border-t border-slate-100">
                 {[
-                  { label: 'Avg Salary',   val: selectedTech.salary,       color: 'text-slate-900'   },
+                  { label: 'Avg Salary',   val: formatSalaryToINR(selectedTech.salary),       color: 'text-slate-900'   },
                   { label: 'YoY Growth',   val: selectedTech.growth,       color: 'text-emerald-600' },
                   { label: 'Job Listings', val: selectedTech.jobListings,  color: 'text-slate-900'   },
                   { label: 'Difficulty',   val: selectedTech.level,        color: 'text-indigo-700'  },

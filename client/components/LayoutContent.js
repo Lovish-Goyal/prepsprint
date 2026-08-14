@@ -32,7 +32,7 @@ export default function LayoutContent({ children }) {
   useEffect(() => {
     const handleCreditError = (e) => {
       setGlobalCreditWarning(
-        e.detail || "AI Provider Credits Exceeded: Please recharge your OpenRouter credit balance to continue using live AI features."
+        e.detail || "Limit Exceeded: Please retry after some time."
       );
     };
     if (typeof window !== 'undefined') {

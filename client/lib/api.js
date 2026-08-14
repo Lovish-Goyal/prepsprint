@@ -50,7 +50,7 @@ const handleError = (error) => {
     
   if (isCreditErr && typeof window !== 'undefined') {
     window.dispatchEvent(new CustomEvent('ai-credits-exceeded', { 
-      detail: error.response?.data?.detail || "AI Provider Credits Exceeded: Please recharge your OpenRouter credit balance to continue using live AI features."
+      detail: error.response?.data?.detail || "Limit Exceeded: Please retry after some time."
     }));
   }
   return Promise.reject(error);

@@ -109,7 +109,7 @@ async def create_dynamic_roadmap(
         )
         roadmap_content = json.loads(fallback_roadmap)
         phases = roadmap_content.get("phases", [])
-        ai_result["warning"] = "AI Response Malformed: Using offline dynamic blueprint fallback."
+        ai_result["warning"] = "Limit Exceeded: Please retry after some time."
 
     # Persist the roadmap
     new_roadmap = {

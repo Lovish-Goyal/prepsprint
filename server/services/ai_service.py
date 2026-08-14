@@ -1662,7 +1662,7 @@ class AIService:
             return {
                 "roadmap": fallback_roadmap, 
                 "status": "success",
-                "warning": "AI Provider Credits Exceeded: Using offline dynamic blueprint fallback."
+                "warning": "Limit Exceeded: Please retry after some time."
             }
 
     @staticmethod
